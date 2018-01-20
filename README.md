@@ -1,6 +1,7 @@
 # lottery
 
 > 基于vue.js抽奖项目，附带背景音乐
+> 技术栈：vue + vuex + vue-router + axios + elementUI + nprogress + less + ECMAjavascript6
 
 ## Description
 本项目主要有以下几个点需要注意：
