@@ -4,7 +4,7 @@
     <el-steps :active="step.active" finish-status="success">
       <el-step title="数据获取中..." :description="`共计获取 ${getNum}条`"></el-step>
       <el-step title="存储数据中..." :description="`共计插入 ${storeNum}条`"></el-step>
-      <el-step title="读取头像地址中..." :description="`共计缓存 ${catchImg}张`"></el-step>
+      <el-step title="缓存头像中..." :description="`共计缓存 ${catchImg}张`"></el-step>
       <el-step title="数据校验中..." description="比对数据是否一致"></el-step>
       <el-step :title="`校验${step.title}`" :status="step.status" :description="step.description"></el-step>
     </el-steps>
