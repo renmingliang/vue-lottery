@@ -1,6 +1,6 @@
 # lottery
 
-> A Vue.js project
+> 基于vue.js抽奖项目
 
 ## Build Setup
 
