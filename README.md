@@ -1,6 +1,6 @@
 # lottery
 
-> 基于vue.js抽奖项目
+> 基于vue.js抽奖项目，附带背景音乐
 
 ## Description
 本项目主要有以下几个点需要注意：
