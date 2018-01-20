@@ -4,8 +4,8 @@
 
 ## Screenshot
 以下为该项目主要界面截图：
-1. ![登录界面](screenshot/1.png)
-2. ![抽奖界面](screenshot/2.png)
++ ![登录界面](screenshot/1.png)
++ ![抽奖界面](screenshot/2.png)
 
 
 ## Build Setup
