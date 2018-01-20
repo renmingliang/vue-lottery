@@ -1,0 +1,54 @@
+/*=============reset==================================*/
+/*默认鼠标样式与字体圆滑*/
+body{
+  cursor:default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* 清零 */
+body,div,ul,li,ol,h1,h2,h3,h4,h5,h6,input,textarea,select,p,dl,dt,dd,a,img,button,form,table,th,td,tr,tbody,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,fieldset{
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+/*设置HTML5元素为块级元素*/
+article,aside,details,figcaption,figure,header, footer,hgroup,menu,nav,section{
+  display: block;
+}
+/*去除iPhone中默认的input样式*/
+input{
+  vertical-align: middle;
+  resize:none;
+}
+textarea{
+  resize:none;
+}
+/*图片自适应*/
+img{
+  width:auto\9; /*IE8*/
+  vertical-align: top;
+  -ms-interpolation-mode:bicubic; /*为了照顾IE图片缩放失真*/
+}
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+address, cite, em, i{
+  font-style: normal;
+}
+strong,b{
+  font-weight: bold;
+}
+ul, ol, li{
+  list-style: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+html,body{
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
