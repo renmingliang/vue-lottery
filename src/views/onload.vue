@@ -175,7 +175,6 @@ export default {
         tempImg.addEventListener('load', () => {
           this.catchImg++
           if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
-            console.log('进入')
             this.msg4 = true
             const hrefTimer = setInterval(() => {
               this.hrefTime--
