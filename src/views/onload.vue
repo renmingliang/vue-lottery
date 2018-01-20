@@ -1,30 +1,28 @@
 <!-- onload -->
 <template>
   <div class="load-container">
-    <span>数据获取中......</span><br>
-    <span v-show="msg1">共获取数据 <span>{{getNum}}</span> 条</span><br>
-    <br>
-    <span v-show="step2">创建存储空间并存储数据中......</span><br>
-    <span v-show="msg2">数据插入成功，共存储数据 <span>{{storeNum}}</span> 条</span><br>
-    <br>
-    <span v-show="step3">读取微信头像地址中......</span><br>
-    <span v-show="msg3">正在缓存头像图片<span >{{catchImg}}</span>条</span><br>
-    <br>
-    <span v-show="msg4">数据校验成功 {{hrefTime}}秒 后进入抽奖</span>
+    <el-steps :active="step.active" finish-status="success">
+      <el-step title="数据获取中..." :description="`共计获取 ${getNum}条`"></el-step>
+      <el-step title="存储数据中..." :description="`共计插入 ${storeNum}条`"></el-step>
+      <el-step title="读取头像地址中..." :description="`共计缓存 ${catchImg}张`"></el-step>
+      <el-step title="数据校验中..." description="比对数据是否一致"></el-step>
+      <el-step :title="`校验${step.title}`" :status="step.status" :description="step.description"></el-step>
+    </el-steps>
   </div>
 </template>
 
 <script>
+import { getData } from '../api'
 export default {
   name: 'onload',
   data () {
     return {
-      msg1: false,
-      step2: false,
-      msg2: false,
-      step3: false,
-      msg3: false,
-      msg4: false,
+      step: {
+        active: 0,
+        title: '',
+        status: 'wait',
+        description: ''
+      }, // 步骤
       hrefTime: 3, // 跳转等待时间
       request: null,
       DBname: 'lottery2018',
@@ -86,19 +84,60 @@ export default {
   methods: {
     // 1.初始化
     ready () {
-      // 1.1.先删除本地indexDB数据表
+      // 1.0.先删除本地indexDB数据表
       this.deleteDB(this.DBname)
 
-      // 1.2.获取数据
-      console.log(this.data.userData)
-      this.getNum = this.data.userData.length
-      this.msg1 = true
-
-      // 1.3.初始化创建本地indexDB数据表
-      this.initDatabase()
-
-      // 1.4.缓存头像
-      this.preLoadImg()
+      // 1.1.注意这里采用promise链式语法
+      getData()
+        // 1.1.1获取数据
+        .then(() => {
+          console.log(1)
+          this.step.active = 1
+          this.getNum = this.data.userData.length
+        })
+        // 1.1.2.初始化创建本地indexDB数据表
+        .then(() => {
+          console.log(2)
+          this.step.active = 2
+          this.initDatabase()
+        })
+        // 1.1.3.缓存头像
+        .then(() => {
+          console.log(3)
+          this.step.active = 3
+          this.preLoadImg()
+        })
+        // 1.1.4.校验数据
+        .then(() => {
+          console.log(4)
+          this.step.active = 4
+          if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
+            this.step = {
+              title: '成功',
+              status: 'success',
+              description: `${this.hrefTime}秒后进入抽奖页面`
+            }
+          } else {
+            this.step = {
+              title: '失败',
+              status: 'error',
+              description: `请退出重进或 强制刷新本页面`
+            }
+          }
+        })
+        // 1.1.5.校验成功
+        .then(() => {
+          console.log(5)
+          this.step.active = 5
+          if (this.step.status === 'error') return false
+          const hrefTimer = setInterval(() => {
+            this.hrefTime--
+            if (this.hrefTime < 0) {
+              clearInterval(hrefTimer)
+              // this.$router.push({ path: '/lottery' })
+            }
+          }, this.timeout)
+        })
     },
     // 2.删除本地表
     deleteDB (name) {
@@ -108,7 +147,6 @@ export default {
     initDatabase () {
       if (window.indexedDB) {
         const self = this
-        self.step2 = true
         self.request = window.indexedDB.open(self.DBname, self.DBver) // 参数为：数据库名和版本号；数据库存在，则打开它；否则创建。
         self.request.onsuccess = function (event) {
           const mydb = event.target.result
@@ -123,12 +161,13 @@ export default {
           alert(`打开失败,错误号：${event.target.errorCode}`)
         }
         self.request.onupgradeneeded = function (event) {
-          const mydb = self.request.result // 获得数据库实例对象
+          const mydb = event.target.result // 获得数据库实例对象
           if (!mydb.objectStoreNames.contains('complete')) { // 判断对象存储空间名称是否已经存在
             mydb.createObjectStore('complete', {keyPath: 'CompleteID'}) // 创建storeName对象存储空间;指定keyPath选项为id（即主键为id）
           }
-          mydb.createObjectStore('type', {autoIncrement: true})
-          self.store1 = true
+          if (!mydb.objectStoreNames.contains('type')) { // 判断对象存储空间名称是否已经存在
+            mydb.createObjectStore('type', {autoIncrement: true})
+          }
         }
       } else {
         alert('您的浏览器不支持IndexedDB数据库。')
@@ -137,14 +176,12 @@ export default {
     // 4.插入数据表，修改为Promise链式语法
     insert (db, storeName, tempData) {
       return new Promise((resolve, reject) => {
-        const self = this
         let storeNum = 0
         // 使用事务
         const transaction = db.transaction(storeName, // 事务操作的对象存储空间名
           'readwrite') // 事务模式:'readwrite'可读写模式;READ_ONLY只读模式;VERSION_CHANGE版本升级模式;
         // 2.1、当事务中的所有操作请求都被处理完成时触发
         transaction.oncomplete = function (event) {
-          self.msg2 = true
           resolve(storeNum)
         }
         // 2.2、当事务中出现错误时触发，默认的处理方式为回滚事务；
@@ -167,23 +204,12 @@ export default {
     },
     // 5.缓存图片
     preLoadImg () {
-      this.step3 = true
-      this.msg3 = true
       for (const item of this.data.userData) {
         const tempImg = new Image()
         // 图片加载完成
         tempImg.addEventListener('load', () => {
           this.catchImg++
-          if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
-            this.msg4 = true
-            const hrefTimer = setInterval(() => {
-              this.hrefTime--
-              if (this.hrefTime < 0) {
-                clearInterval(hrefTimer)
-                this.$router.push({ path: '/lottery' })
-              }
-            }, this.timeout)
-          }
+          console.log(this.getNum, this.storeNum, this.catchImg)
         }, false)
         // 图片src地址
         tempImg.src = item.HeadImg
@@ -197,6 +223,7 @@ export default {
 
 <style lang='less' scoped>
 .load-container{
+  padding: 50px;
   font-size: 20px;
 }
 </style>
