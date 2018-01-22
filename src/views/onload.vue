@@ -1,32 +1,25 @@
 <!-- onload -->
 <template>
   <div class="load-container">
-    <el-steps :active="step.active" finish-status="success">
+    <el-steps :active="isActive" finish-status="success">
       <el-step title="数据获取中..." :description="`共计获取 ${getNum}条`"></el-step>
       <el-step title="存储数据中..." :description="`共计插入 ${storeNum}条`"></el-step>
       <el-step title="缓存头像中..." :description="`共计缓存 ${catchImg}张`"></el-step>
-      <el-step title="数据校验中..." description="比对数据是否一致"></el-step>
-      <el-step :title="`校验${step.title}`" :status="step.status" :description="step.description"></el-step>
+      <el-step :title="`数据校验${step.title}`" :status="step.status" :description="step.description"></el-step>
     </el-steps>
+    <div v-if="stop.show" :class="classStop">
+      <div class="stop-tips">{{stop.tips}}</div>
+      <div class="stop-mask"></div>
+    </div>
   </div>
 </template>
 
 <script>
-import { getData } from '../api'
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'onload',
   data () {
     return {
-      step: {
-        active: 0,
-        title: '',
-        status: 'wait',
-        description: ''
-      }, // 步骤
-      hrefTime: 3, // 跳转等待时间
-      request: null,
-      DBname: 'lottery2018',
-      DBver: '2',
       data: {
         userData: [
           {Company: '公司测1', CompleteID: '1', HeadImg: 'http://test.baoxianadmin.com/static/m/images/headImage/1.jpg', Name: '测1', Num: 'M1', OpenID: '1', Award: '0'},
@@ -69,10 +62,15 @@ export default {
           {value: '5', label: '其他', number: ''}
         ]
       },
+      request: null, // indexDB对象
+      stop: {
+        show: false,
+        tips: '叁'
+      }, // 倒计时文字--叁贰壹
       getNum: 0, // 用户数据长度
       storeNum: 0, // 存储数据长度
       catchImg: 0, // 已缓存图片数量
-      timeout: 1000 // 定时器间隔
+      isActive: 0 // 步骤流程
     }
   },
   created () {
@@ -80,7 +78,23 @@ export default {
   },
   mounted () {},
   components: {},
-  computed: {},
+  computed: {
+    ...mapState([
+      'DBname',
+      'DBver',
+      'storeName'
+    ]),
+    ...mapGetters([
+      'step'
+    ]),
+    // 利用计算属性绑定class
+    classStop () {
+      return {
+        'lottery-stop': true,
+        'show': this.stop.show
+      }
+    }
+  },
   methods: {
     // 1.初始化
     ready () {
@@ -88,55 +102,28 @@ export default {
       this.deleteDB(this.DBname)
 
       // 1.1.注意这里采用promise链式语法
-      getData()
+      this.$store.dispatch({type: 'getDatas'})
         // 1.1.1获取数据
         .then(() => {
-          console.log(1)
-          this.step.active = 1
+          this.isActive = 1
           this.getNum = this.data.userData.length
         })
         // 1.1.2.初始化创建本地indexDB数据表
         .then(() => {
-          console.log(2)
-          this.step.active = 2
+          this.isActive = 2
           this.initDatabase()
         })
         // 1.1.3.缓存头像
         .then(() => {
-          console.log(3)
-          this.step.active = 3
+          this.isActive = 3
           this.preLoadImg()
         })
-        // 1.1.4.校验数据
+        // 1.1.4.校验数据--注意这里延时1s后执行
         .then(() => {
-          console.log(4)
-          this.step.active = 4
-          if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
-            this.step = {
-              title: '成功',
-              status: 'success',
-              description: `${this.hrefTime}秒后进入抽奖页面`
-            }
-          } else {
-            this.step = {
-              title: '失败',
-              status: 'error',
-              description: `请退出重进或 强制刷新本页面`
-            }
-          }
-        })
-        // 1.1.5.校验成功
-        .then(() => {
-          console.log(5)
-          this.step.active = 5
-          if (this.step.status === 'error') return false
-          const hrefTimer = setInterval(() => {
-            this.hrefTime--
-            if (this.hrefTime < 0) {
-              clearInterval(hrefTimer)
-              // this.$router.push({ path: '/lottery' })
-            }
-          }, this.timeout)
+          this.isActive = 4
+          setTimeout(() => {
+            this.validateData()
+          }, 1000)
         })
     },
     // 2.删除本地表
@@ -151,11 +138,11 @@ export default {
         self.request.onsuccess = function (event) {
           const mydb = event.target.result
           // 插入用户数据表
-          self.insert(mydb, 'complete', self.data.userData).then((res) => {
+          self.insert(mydb, self.storeName.user, self.data.userData).then((res) => {
             self.storeNum = res
           })
           // 插入奖项数据表
-          self.insert(mydb, 'type', self.data.type)
+          self.insert(mydb, self.storeName.award, self.data.type)
         }
         self.request.onerror = function (event) {
           alert(`打开失败,错误号：${event.target.errorCode}`)
@@ -209,10 +196,41 @@ export default {
         // 图片加载完成
         tempImg.addEventListener('load', () => {
           this.catchImg++
-          console.log(this.getNum, this.storeNum, this.catchImg)
         }, false)
         // 图片src地址
         tempImg.src = item.HeadImg
+      }
+    },
+    // 6.数据校验
+    validateData () {
+      if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
+        const corStep = {
+          title: '成功',
+          status: 'success',
+          description: '3秒后进入抽奖页面'
+        }
+        this.$store.commit({type: 'TOGGLE_STEP', data: corStep})
+        this.stop.show = true
+        let endTime = 3
+        const stopTimer = setInterval(() => {
+          endTime--
+          if (endTime === 2) {
+            this.stop.tips = '贰'
+          } else if (endTime === 1) {
+            this.stop.tips = '壹'
+          } else {
+            clearInterval(stopTimer)
+            this.$router.push({ path: '/lottery' })
+          }
+        }, 1000)
+      } else {
+        const errStep = {
+          title: '失败',
+          status: 'error',
+          description: '请重新进入或者 强制刷新本页面'
+        }
+        this.$store.commit({type: 'TOGGLE_STEP', data: errStep})
+        return false
       }
     }
   },
@@ -225,5 +243,37 @@ export default {
 .load-container{
   padding: 50px;
   font-size: 20px;
+  .lottery-stop{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    transition: all 0.3s;
+    &.show{
+      display: block;
+    }
+    .stop-tips{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      text-align: center;
+      font-size: 18rem;
+      padding: 0 3rem;
+      color: #FD361F;
+      font-family: 'STKaiti', 'KaiTi ';
+      border: 4px solid #FD361F;
+      border-radius: 100%;
+    }
+    .stop-mask{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.1);
+    }
+  }
 }
 </style>

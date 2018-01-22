@@ -3,7 +3,7 @@
     <div class="login-inner">
       <el-form class="login-form" @submit.native.prevent :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
         <div class="title-container">
-          <h3 class="title">民太安集团年会抽奖系统</h3>
+          <h3 class="title">{{msg}}</h3>
         </div>
         <el-form-item prop="password">
           <el-input name="password" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"/>
@@ -11,56 +11,48 @@
             <i class="el-icon-view"></i>
           </span>
         </el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">进入</el-button>
+        <el-button type="primary" style="width:100%;" :loading="loginLoading" @click.native.prevent="handleLogin">进入</el-button>
       </el-form>
     </div>
   </div>
 </template>
 
 <script>
-import { login } from '../api'
+import { mapGetters } from 'vuex'
 export default {
   name: 'login',
   data () {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 10) {
-        callback(new Error('密码不能少于10个长度'))
-      } else {
-        callback()
-      }
-    }
-    return {
-      loginForm: {
-        password: 'baoqU@2017'
-      },
-      loginRules: {
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
-      },
-      passwordType: 'password',
-      loading: false
-    }
+    return {}
+  },
+  computed: {
+    ...mapGetters([
+      'msg',
+      'loginForm',
+      'loginRules',
+      'passwordType',
+      'loginLoading'
+    ])
+  },
+  mounted () {
+    console.log(this.loginForm)
   },
   methods: {
     showPwd () {
       if (this.passwordType === 'password') {
-        this.passwordType = ''
+        this.$store.commit({type: 'TOGGLE_TYPE', value: ''})
       } else {
-        this.passwordType = 'password'
+        this.$store.commit({type: 'TOGGLE_TYPE', value: 'password'})
       }
     },
     handleLogin () {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          login(this.loginForm).then((res) => {
-            this.loading = false
+          this.$store.dispatch({type: 'postLogin', data: this.loginForm}).then(res => {
+            console.log(`提交返回数据：${res.data}`)
             this.$router.push({ path: '/onload' })
-          }).catch((err) => {
-            this.loading = false
-            console.log(err)
           })
         } else {
-          alert('密码错误')
+          alert('请输入正确密码')
           return false
         }
       })
@@ -104,15 +96,14 @@ export default {
   .login-inner{
     text-align: center;
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 50%;
+    top: 50%;
     width: 520px;
-    padding: 35px 35px 15px 35px;
-    margin: 120px auto;
-    background-image: url(../assets/images/login.jpg);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
     height: 576px;
+    padding: 35px 35px 15px 35px;
+    transform: translate3d(-50%, -50%, 0);
+    background: url(../assets/images/login.jpg) no-repeat;
+    background-size: 100% 100%;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.58);
     border-radius: 25px;
     .login-form{

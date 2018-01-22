@@ -15,9 +15,9 @@
         </ul>
         <div class="lottery-btn">
           <div class="btn-func">
-            <button id="begin" @click="beginRoll">开始</button>
-            <img id="img2017" src="../assets/images/2017.png">
-            <button id="stop" @click="stopRoll">暂停</button>
+            <button @click="beginRoll">开始</button>
+            <img src="../assets/images/2017.png">
+            <button @click="stopRoll">抽取</button>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
         <img src="../assets/images/QR-code.jpg" alt="QR-code">
         <p>活动规则：<br>关注微信公众号“家家365”<br>回复您的员工编号+姓名<br>（如“M0001234王小明”）完成实名认证<br>收到系统回复后即代表进入抽奖名单中</p>
       </div>
-      <div :class="classObject" @click="toggleMusic">
+      <div :class="classMusic" @click="toggleMusic">
         <div class="music-btn"></div>
         <audio loop="loop" preload="auto" ref="music">
           <source src="../assets/shiji.mp3" type="audio/mpeg" />
@@ -67,54 +67,29 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'lottery',
   data () {
     return {
-      timesOptions: [
-        {
-          value: '1',
-          label: '抽1人',
-          disabled: false
-        }, {
-          value: '2',
-          label: '抽2人',
-          disabled: false
-        }, {
-          value: '3',
-          label: '抽3人',
-          disabled: false
-        }, {
-          value: '4',
-          label: '抽4人',
-          disabled: false
-        }, {
-          value: '5',
-          label: '抽5人',
-          disabled: false
-        }
-      ], // 单次抽取选项
-      awardOptions: [], // 奖项
       request: null, // indexDB对象
-      DBname: 'lottery2018', // indexDB存储名称
-      DBver: '2', // indexDB存储版本
+      awardOptions: [], // 奖项
       userData: [], // 总用户集合
       rollIdArr: [], // 当前抽中集合
       initial: false, // 是否加载数据完成
       maxAward: '', // 本轮奖项类别
       maxNum: '', // 本轮奖项总人数
-      maxTimes: '5', // 单次最大抽取人数
       rollLen: 0, // 本轮已抽中用户数
+      maxTimes: '5', // 单次最大抽取人数
       total: 0, // 累计所有抽中用户数
       isBegin: false, // 是否开始
       timeInterJS: null, // 滚动定时器对象
-      intervalTime: 80, // 滚动间隔
       musicState: false // 音乐播放状态
     }
   },
   created () {
-    this.getData('complete', this.userData)
-    this.getData('type', this.awardOptions)
+    this.getData(this.storeName.user, this.userData)
+    this.getData(this.storeName.award, this.awardOptions)
   },
   mounted () {
     this.toggleMusic()
@@ -122,8 +97,18 @@ export default {
   },
   components: {},
   computed: {
+    ...mapState([
+      'DBname',
+      'DBver',
+      'storeName'
+    ]),
+    ...mapGetters([
+      'timesOptions',
+      'intervalTime',
+      'keyBand'
+    ]),
     // 利用计算属性绑定class
-    classObject () {
+    classMusic () {
       return {
         'lottery-music': true,
         'stoped': !this.musicState
@@ -134,9 +119,9 @@ export default {
     // 0.监听键盘输入
     keyDown (e) {
       const keyCode = e.code
-      if (keyCode === 'Enter') {
+      if (keyCode === this.keyBand.start) {
         this.beginRoll()
-      } else if (keyCode === 'Space') {
+      } else if (keyCode === this.keyBand.stop) {
         this.stopRoll()
       }
     },
@@ -173,24 +158,28 @@ export default {
     // 2.结束抽取
     stopRoll () {
       if (this.isBegin) {
-        clearInterval(this.timeInterJS)
-        // 2.0设置抽中人数集合奖项
-        this.rollIdArr.map((item) => {
-          item.Award = this.maxAward
-        })
-        // 2.1更新已抽中人数数目
-        this.rollLen += this.rollIdArr.length
-        // 2.2更新累计抽中人数
-        this.total += this.rollIdArr.length
-        this.isBegin = false
-        console.log(this.rollIdArr)
+        this.render()
       }
     },
-    // 3.滚动主要函数
+    // 3.抽取结果
+    render () {
+      clearInterval(this.timeInterJS)
+      // 2.0设置抽中人数集合奖项
+      this.rollIdArr.map((item) => {
+        item.Award = this.maxAward
+      })
+      // 2.1更新已抽中人数数目
+      this.rollLen += this.rollIdArr.length
+      // 2.2更新累计抽中人数
+      this.total += this.rollIdArr.length
+      this.isBegin = false
+      console.log(this.rollIdArr)
+    },
+    // 4.滚动主要函数
     roll () {
-      // 3.0先清空抽中集合数组
+      // 4.0先清空抽中集合数组
       this.rollIdArr = []
-      // 3.1更新抽中集合
+      // 4.1更新抽中集合
       while (this.rollIdArr.length < this.maxTimes) {
         const rnd = this.getRand()
         const obj = this.userData[rnd]
@@ -199,7 +188,7 @@ export default {
         }
       }
     },
-    // 4.去除已抽取观众
+    // 5.去除已抽取观众
     findInArr (arr, obj) {
       for (let i = 0; i < arr.length; i++) {
         if (arr[i]['CompleteID'] === obj.CompleteID) {
@@ -208,31 +197,31 @@ export default {
       }
       return false
     },
-    // 5.随机比例返回抽取结果
+    // 6.随机比例返回抽取结果
     getRand () {
       return Math.floor(Math.random() * this.userData.length)
     },
-    // 6.修改单次抽取个数
+    // 7.修改单次抽取个数
     changeTimes (val) {
       const rnd = this.getRand()
       this.rollIdArr = this.userData.slice(rnd, Number(val) + rnd)
     },
-    // 7.修改奖项及本轮人数
+    // 8.修改奖项及本轮人数
     changeAward (val) {
-      // 7.0修正本轮已抽取奖项人数
+      // 8.0修正本轮已抽取奖项人数
       this.rollLen = 0
-      // 7.1本轮奖项总人数
+      // 8.1本轮奖项总人数
       this.awardOptions.map((item) => {
         if (item.value === val) {
           this.maxNum = item.number ? item.number : '99'
-          // 7.1.1本轮总人数小于单次抽取人数
+          // 8.1.1本轮总人数小于单次抽取人数
           if (Number(this.maxNum) < Number(this.maxTimes)) {
             this.maxTimes = this.maxNum
             this.changeTimes(this.maxTimes)
           }
         }
       })
-      // 7.2单次可供抽取人数
+      // 8.2单次可供抽取人数
       this.timesOptions.map((item, index) => {
         if (Number(item.value) > Number(this.maxNum)) {
           item.disabled = true
@@ -241,7 +230,7 @@ export default {
         }
       })
     },
-    // 8.切换音乐播放状态
+    // 9.切换音乐播放状态
     toggleMusic () {
       this.musicState = !this.musicState
       if (this.musicState) {
@@ -250,7 +239,7 @@ export default {
         this.$refs.music.pause()
       }
     },
-    // 9.获取所有用户数据
+    // 10.获取所有用户数据
     getData (storeName, tempData) {
       if (window.indexedDB) {
         const self = this

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 /* 1、登录 */
 export function login (data) {
-  console.log(data)
+  console.log(`提交数据：${JSON.stringify(data)}`)
   return request({
     method: 'post',
     url: '/doLogin.php',
