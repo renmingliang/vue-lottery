@@ -1,11 +1,6 @@
+import config from '@/utils/config'
+
 // initial data
-const state = {
-  DBname: 'lottery2018', // indexDB名称
-  DBver: '2', // indexDB版本
-  storeName: {
-    user: 'complete',
-    award: 'type'
-  }
-}
+const state = config.state
 
 export default state

@@ -33,9 +33,6 @@ export default {
       'loginLoading'
     ])
   },
-  mounted () {
-    console.log(this.loginForm)
-  },
   methods: {
     showPwd () {
       if (this.passwordType === 'password') {

@@ -17,6 +17,7 @@ import './permission' // permission control
 Vue.use(Element, {
   size: 'medium' // set element-ui default size
 })
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

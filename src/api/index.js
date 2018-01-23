@@ -1,11 +1,12 @@
 import request from '@/utils/request'
+import config from '@/utils/config'
 
 /* 1、登录 */
 export function login (data) {
   console.log(`提交数据：${JSON.stringify(data)}`)
   return request({
     method: 'post',
-    url: '/doLogin.php',
+    url: config.login.url,
     data
   })
 }
@@ -14,7 +15,7 @@ export function login (data) {
 export function getData () {
   return request({
     method: 'get',
-    url: '/getData.php'
+    url: config.onload.url
   })
 }
 
@@ -22,7 +23,7 @@ export function getData () {
 export function postData (data) {
   return request({
     method: 'post',
-    url: '/postData.php',
+    url: config.lottery.url,
     data
   })
 }

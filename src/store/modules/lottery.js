@@ -1,8 +1,12 @@
 import { postData } from '../../api'
 import * as types from '../mutation-types'
+import config from '../../utils/config'
+
+const merge = require('webpack-merge')
 
 // initial data
-const state = {
+const state = merge(config.lottery.state, {
+  // 单次抽取选项
   timesOptions: [
     {
       value: '1',
@@ -25,16 +29,13 @@ const state = {
       label: '抽5人',
       disabled: false
     }
-  ], // 单次抽取选项
-  intervalTime: 80, // 滚动间隔
-  keyBand: {
-    start: 'Enter',
-    stop: 'Space'
-  } // 绑定键盘事件
-}
+  ]
+})
 
 // getters 从state中派生其他状态，应用于更新过滤数据，用于计算属性computed，主要针对动态数据
 const getters = {
+  download: state => state.download,
+  rule: state => state.rule,
   timesOptions: state => state.timesOptions,
   intervalTime: state => state.intervalTime,
   keyBand: state => state.keyBand

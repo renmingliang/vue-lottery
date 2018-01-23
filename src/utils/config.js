@@ -1,24 +1,13 @@
-# 简介
+// login--validate, 校验方式
+const validatePassword = (rule, value, callback) => {
+  if (value.length < 10) {
+    callback(new Error('密码不能少于10个长度'))
+  } else {
+    callback()
+  }
+}
 
-> 基于vue.js抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
-
-> 技术栈：vue + vuex + vue-router + axios + elementUI + html2canvas + nprogress + less + ECMAjavascript6
-
-本项目目前处于持续更新阶段，欢迎star，issue关注！
-
-## 说明
-### 实现思路
-本项目主要有以下几个点需要`注意`：
-1. 为了保证数据安全，需要设置登录，在登录成功之后的前提下获取后台传递的数据；
-2. 由于抽奖的数据都上千条，cookie和storage存储空间受限都不够用，依次考虑利用浏览器支持的indexDB来存储用户数据库，以及主要奖项和该奖项抽取的人数的；
-3. 每次抽奖完成的结果，须返回给后台存储数据，以保障前后台数据一致性（实现具体抽奖的逻辑功能，不受限，取决于前后台同事自己沟通结果，本示例前端实现抽取，在[src/views/lottery](src/views/lottery.vue)文件内）；
-4. 记录单次抽奖人数，不论抽多少次，只要满足本轮奖项人数，即宣告本轮抽取结束，代码逻辑不以抽取多少次为依据；
-5. 考虑抽奖现场肯定会加抽奖项的环节（不多说，参与过年会的都知道，没抽中的人肯定会叫喊老板现场再抽的），故这里也设置了前端可选项其他奖，默认设置抽取99人，毕竟加抽的奖项人数，99人足够啦，这里也可灵活变动；
-
-### 项目配置文件
-项目配置文件位于[src/utils/config](src/utils/config.js)，按照注释相应地修改对应项就好
- ``
- // global config
+// global config
 const config = {
   // 1.登录页
   login: {
@@ -96,7 +85,7 @@ const config = {
     state: {
       // 下载截图
       download: {
-        show: true,
+        show: false,
         delay: 800
       },
       // 显示右下角参与规则
@@ -129,47 +118,5 @@ const config = {
     }
   }
 }
- ``
 
-## 功能
-1. 抽奖前，选择需要抽取的奖项
-2. 点击开始抽奖按钮(或Enter回车键)，数据滚动
-3. 点击抽取(或space空格键)结束滚动，显示中奖人员
-4. 再点击开始抽取进入第2步循环，若完成本轮抽取，则进入第1步选择抽取其他奖项
-
-## 截图
-针对1920*1080大屏以上显示，不适配移动端，以下为该项目主要界面截图：
-![登录界面](screenshot/1.png)
-![数据加载界面](screenshot/2.png)
-![抽奖界面](screenshot/3.gif)
-
-自动保存的抽奖截图文件至本地思路：
-1.实现的流程逻辑在[src/utils/screenshot](src/utils/screenshot.js)文件中；
-2.由于浏览器browser不支持node.js的模块fs读写文件，因而本示例采用`html2canvas`来完成截图功能，具体的使用自行百度或谷歌；
-3.截完屏，最主要的是需要自动保存至本地，利用a标签的download和herf属性可以实现，通过在结束时，自动调用click的事件来触发；
-4.最后剩余一个`BUG`，在截屏里面，是没有将图像获取下来，猜测可能是由于`html2canvas`的issue，也或者是由于之前缓存页面加载过的原因，但相对来说也可接受；
-![截屏示例](screenshot/4.gif)
-
-## 开发
-
-``` bash
-# 克隆项目
-git clone https://github.com/renmingliang/vue-lottery.git
-
-# 切换至目录
-cd vue-lottery
-
-# 安装依赖
-npm install
-
-# 本地浏览器地址：localhost:9301
-npm run dev
-
-# 发布正式版本
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+export default config

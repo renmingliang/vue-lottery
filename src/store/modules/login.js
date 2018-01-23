@@ -1,28 +1,15 @@
 import { login } from '../../api'
 import * as types from '../mutation-types'
+import config from '../../utils/config'
 
-// login--validate
-const validatePassword = (rule, value, callback) => {
-  if (value.length < 10) {
-    callback(new Error('密码不能少于10个长度'))
-  } else {
-    callback()
-  }
-}
+const merge = require('webpack-merge')
 
 // initial data
-const state = {
-  msg: '民太安集团年会抽奖系统', // 当前公司提示语
-  loginForm: {
-    password: 'baoqU@2017'
-  }, // 登录密码
-  loginRules: {
-    password: [{ required: true, trigger: 'blur', validator: validatePassword }]
-  }, // 校验规则
+const state = merge(config.login.state, {
   passwordType: 'password', // 登录页面输入框类型
   loginLoading: false, // 登录状态按钮loading
   isLogin: false // 是否已登录
-}
+})
 
 const getters = {
   msg: state => state.msg,

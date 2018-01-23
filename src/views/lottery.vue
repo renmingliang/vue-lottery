@@ -3,16 +3,21 @@
   <div class="lottery-container">
     <div class="lottery-layout">
       <div class="lottery-main">
-        <ul>
-          <li class="lottery-item" v-for="(list, index) in rollIdArr" :key="index">
-            <div class="lottery-roll">
-              <div class="roll-item"><img :src="list.HeadImg"></div>
-              <div class="roll-item"><span>{{list.Num}}</span></div>
-              <div class="roll-item"><span>{{list.Name}}</span></div>
-              <div class="roll-item"><span>{{list.Company}}</span></div>
-            </div>
-          </li>
-        </ul>
+        <div class="lottery-user">
+          <div class="lottery-tips">
+            {{maxAwardTips}}（{{rollLen}} / {{ maxNum | editNumber }}）
+          </div>
+          <ul>
+            <li class="lottery-item" v-for="(list, index) in rollIdArr" :key="index">
+              <div class="lottery-roll">
+                <div class="roll-item"><img :src="list.HeadImg"></div>
+                <div class="roll-item"><span>{{list.Num}}</span></div>
+                <div class="roll-item"><span>{{list.Name}}</span></div>
+                <div class="roll-item"><span>{{list.Company}}</span></div>
+              </div>
+            </li>
+          </ul>
+        </div>
         <div class="lottery-btn">
           <div class="btn-func">
             <button @click="beginRoll">开始</button>
@@ -35,7 +40,6 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-tag size="large">本轮抽取：{{ maxNum | editNumber }}</el-tag>
           <br>
           <el-form-item label="单次抽取">
             <el-select @change="changeTimes" v-model="maxTimes" placeholder="请选择单次抽取人数">
@@ -48,14 +52,13 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-tag type="success" size="large">本轮累计：{{ `${rollLen}人` }}</el-tag>
         </el-form>
       </div>
-      <div class="lottery-rule">
-        <img src="../assets/images/QR-code.jpg" alt="QR-code">
-        <p>活动规则：<br>关注微信公众号“家家365”<br>回复您的员工编号+姓名<br>（如“M0001234王小明”）完成实名认证<br>收到系统回复后即代表进入抽奖名单中</p>
+      <div v-if="rule.show" class="lottery-rule">
+        <img :src="rule.img">
+        <div v-html="rule.html" class="lottery-txt"></div>
       </div>
-      <div :class="classMusic" @click="toggleMusic">
+      <div v-if="showMusic" :class="classMusic" @click="toggleMusic">
         <div class="music-btn"></div>
         <audio loop="loop" preload="auto" ref="music">
           <source src="../assets/shiji.mp3" type="audio/mpeg" />
@@ -68,6 +71,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import screenshot from '@/utils/screenshot'
 export default {
   name: 'lottery',
   data () {
@@ -77,6 +81,7 @@ export default {
       userData: [], // 总用户集合
       rollIdArr: [], // 当前抽中集合
       initial: false, // 是否加载数据完成
+      maxAwardTips: '请选择抽取奖项', // 本轮奖项名称
       maxAward: '', // 本轮奖项类别
       maxNum: '', // 本轮奖项总人数
       rollLen: 0, // 本轮已抽中用户数
@@ -84,7 +89,7 @@ export default {
       total: 0, // 累计所有抽中用户数
       isBegin: false, // 是否开始
       timeInterJS: null, // 滚动定时器对象
-      musicState: false // 音乐播放状态
+      musicState: true // 音乐播放状态
     }
   },
   created () {
@@ -100,9 +105,12 @@ export default {
     ...mapState([
       'DBname',
       'DBver',
-      'storeName'
+      'storeName',
+      'showMusic'
     ]),
     ...mapGetters([
+      'download',
+      'rule',
       'timesOptions',
       'intervalTime',
       'keyBand'
@@ -111,7 +119,7 @@ export default {
     classMusic () {
       return {
         'lottery-music': true,
-        'stoped': !this.musicState
+        'stoped': this.musicState && this.showMusic
       }
     }
   },
@@ -130,7 +138,7 @@ export default {
       if (!this.isBegin) {
         // 1.0选择抽取奖项
         if (!this.maxAward) {
-          alert('请选择抽取奖项')
+          alert(this.maxAwardTips)
           return false
         }
         // 1.1本轮抽奖剩余人数
@@ -172,7 +180,14 @@ export default {
       this.rollLen += this.rollIdArr.length
       // 2.2更新累计抽中人数
       this.total += this.rollIdArr.length
+      // 2.3重置开关
       this.isBegin = false
+      // 2.4等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
+      if (this.download.show) {
+        setTimeout(() => {
+          screenshot(this.maxAward, this.maxNum)
+        }, this.download.delay)
+      }
       console.log(this.rollIdArr)
     },
     // 4.滚动主要函数
@@ -214,6 +229,7 @@ export default {
       this.awardOptions.map((item) => {
         if (item.value === val) {
           this.maxNum = item.number ? item.number : '99'
+          this.maxAwardTips = item.label
           // 8.1.1本轮总人数小于单次抽取人数
           if (Number(this.maxNum) < Number(this.maxTimes)) {
             this.maxTimes = this.maxNum
@@ -233,10 +249,12 @@ export default {
     // 9.切换音乐播放状态
     toggleMusic () {
       this.musicState = !this.musicState
-      if (this.musicState) {
-        this.$refs.music.play()
-      } else {
-        this.$refs.music.pause()
+      if (this.showMusic) {
+        if (this.musicState) {
+          this.$refs.music.pause()
+        } else {
+          this.$refs.music.play()
+        }
       }
     },
     // 10.获取所有用户数据
@@ -356,9 +374,15 @@ export default {
           }
         }
       }
+      .lottery-tips{
+        font-size: 28px;
+        color: gold;
+        text-align: center;
+        margin-bottom: 2%;
+      }
     }
     .lottery-btn{
-      margin-top: 5%;
+      margin-top: 4%;
       .btn-func{
         display: flex;
         justify-content: center;
@@ -382,9 +406,34 @@ export default {
         }
       }
     }
+    .lottery-prize{
+      position: absolute;
+      left: 8%;
+      bottom: 5%;
+      color: gold;
+      font-size: 18px;
+      z-index: 1;
+    }
+    .lottery-rule{
+      position: absolute;
+      right: -4%;
+      bottom: 5%;
+      color: gold;
+      z-index: 1;
+      img{
+        width: 18%;
+        float: left;
+        margin-right: 2%;
+      }
+      .lottery-txt{
+        overflow: hidden;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+    }
     .lottery-music{
       position: absolute;
-      left: 1%;
+      left: 2%;
       bottom: 5%;
       cursor: pointer;
       .music-btn{
@@ -398,31 +447,6 @@ export default {
         .music-btn{
           animation-play-state: paused;
         }
-      }
-    }
-    .lottery-prize{
-      position: absolute;
-      left: 5%;
-      bottom: 8%;
-      color: gold;
-      font-size: 18px;
-      z-index: 1;
-    }
-    .lottery-rule{
-      position: absolute;
-      right: -4%;
-      bottom: 9%;
-      color: gold;
-      z-index: 1;
-      img{
-        width: 18%;
-        float: left;
-        margin-right: 2%;
-      }
-      p{
-        overflow: hidden;
-        font-size: 18px;
-        line-height: 1.4;
       }
     }
   }
