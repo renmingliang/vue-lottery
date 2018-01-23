@@ -1,6 +1,6 @@
 <!-- lottery -->
 <template>
-  <div class="lottery-container">
+  <div class="lottery-container" :style="style.bg">
     <div class="lottery-layout">
       <div class="lottery-main">
         <div class="lottery-user">
@@ -21,7 +21,7 @@
         <div class="lottery-btn">
           <div class="btn-func">
             <button @click="beginRoll">开始</button>
-            <img src="../assets/images/2017.png">
+            <img v-if="style.year.show" :src="style.year.img">
             <button @click="stopRoll">抽取</button>
           </div>
         </div>
@@ -110,6 +110,7 @@ export default {
     ]),
     ...mapGetters([
       'download',
+      'style',
       'rule',
       'timesOptions',
       'intervalTime',
@@ -326,9 +327,6 @@ export default {
 }
 .lottery-container{
   height: 100%;
-  background-image: url(../assets/images/background.jpg);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
   overflow: hidden;
   position: relative;
   .lottery-layout{
@@ -383,12 +381,10 @@ export default {
     }
     .lottery-btn{
       margin-top: 4%;
+      padding: 0 15%;
       .btn-func{
         display: flex;
-        justify-content: center;
-        img{
-          margin: 0 7%;
-        }
+        justify-content: space-around;
         button{
           background-image: url(../assets/images/button.png);
           background-repeat: no-repeat;
@@ -396,6 +392,7 @@ export default {
           background-position-x: -4px;
           color: #fff;
           padding: 10px 36px;
+          margin: 0 1%;
           font-size: 26px;
           border-radius: 7px;
           outline: none;

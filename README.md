@@ -95,6 +95,20 @@ const config = {
     // 回传中奖数据地址
     url: '/postData.php',
     state: {
+      // 样式
+      style: {
+        // 主背景图
+        bg: {
+          backgroundImage: `url(${require('../assets/images/background.jpg')})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '100% 100%'
+        },
+        // 当前抽奖年
+        year: {
+          show: true,
+          img: require('../assets/images/2017.png')
+        }
+      },
       // 下载截图
       download: {
         show: true,

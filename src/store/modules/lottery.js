@@ -34,6 +34,7 @@ const state = merge(config.lottery.state, {
 
 // getters 从state中派生其他状态，应用于更新过滤数据，用于计算属性computed，主要针对动态数据
 const getters = {
+  style: state => state.style,
   download: state => state.download,
   rule: state => state.rule,
   timesOptions: state => state.timesOptions,
