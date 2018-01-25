@@ -3,7 +3,6 @@ import config from '@/utils/config'
 
 /* 1、登录 */
 export function login (data) {
-  console.log(`提交数据：${JSON.stringify(data)}`)
   return request({
     method: 'post',
     url: config.login.url,
@@ -11,7 +10,15 @@ export function login (data) {
   })
 }
 
-/* 2、获取数据 */
+/* 2、检测登陆状态 */
+export function check () {
+  return request({
+    method: 'get',
+    url: config.login.checkUrl
+  })
+}
+
+/* 3、获取数据 */
 export function getData () {
   return request({
     method: 'get',
@@ -19,7 +26,7 @@ export function getData () {
   })
 }
 
-/* 3、回传抽中数据 */
+/* 4、回传抽中数据 */
 export function postData (data) {
   return request({
     method: 'post',

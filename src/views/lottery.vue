@@ -58,10 +58,10 @@
         <img :src="rule.img">
         <div v-html="rule.html" class="lottery-txt"></div>
       </div>
-      <div v-if="showMusic" :class="classMusic" @click="toggleMusic">
+      <div v-if="music.show" :class="classMusic" @click="toggleMusic">
         <div class="music-btn"></div>
         <audio loop="loop" preload="auto" ref="music">
-          <source src="../assets/shiji.mp3" type="audio/mpeg" />
+          <source :src="music.src" type="audio/mpeg" />
           您的浏览器不支持 audio 标签。
         </audio>
       </div>
@@ -76,6 +76,29 @@ export default {
   name: 'lottery',
   data () {
     return {
+      timesOptions: [
+        {
+          value: '1',
+          label: '抽1人',
+          disabled: false
+        }, {
+          value: '2',
+          label: '抽2人',
+          disabled: false
+        }, {
+          value: '3',
+          label: '抽3人',
+          disabled: false
+        }, {
+          value: '4',
+          label: '抽4人',
+          disabled: false
+        }, {
+          value: '5',
+          label: '抽5人',
+          disabled: false
+        }
+      ], // 单次抽取选项
       request: null, // indexDB对象
       awardOptions: [], // 奖项
       userData: [], // 总用户集合
@@ -106,13 +129,12 @@ export default {
       'DBname',
       'DBver',
       'storeName',
-      'showMusic'
+      'music',
+      'rule'
     ]),
     ...mapGetters([
       'download',
       'style',
-      'rule',
-      'timesOptions',
       'intervalTime',
       'keyBand'
     ]),
@@ -120,7 +142,7 @@ export default {
     classMusic () {
       return {
         'lottery-music': true,
-        'stoped': this.musicState && this.showMusic
+        'stoped': this.musicState && this.music.show
       }
     }
   },
@@ -173,17 +195,23 @@ export default {
     // 3.抽取结果
     render () {
       clearInterval(this.timeInterJS)
-      // 2.0设置抽中人数集合奖项
+      // 3.0设置抽中人奖项并同步至indexDB
       this.rollIdArr.map((item) => {
         item.Award = this.maxAward
+        this.updateDataByKey(item.CompleteID, this.maxAward)
       })
-      // 2.1更新已抽中人数数目
+      // 3.1更新已抽中人数数目
       this.rollLen += this.rollIdArr.length
-      // 2.2更新累计抽中人数
+      // 3.2更新累计抽中人数
       this.total += this.rollIdArr.length
-      // 2.3重置开关
-      this.isBegin = false
-      // 2.4等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
+      // 3.3回传中奖数据
+      const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
+      this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
+        console.log(res.data)
+        // 3.3重置开关
+        this.isBegin = false
+      })
+      // 3.4等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
       if (this.download.show) {
         setTimeout(() => {
           screenshot(this.maxAward, this.maxNum)
@@ -250,7 +278,7 @@ export default {
     // 9.切换音乐播放状态
     toggleMusic () {
       this.musicState = !this.musicState
-      if (this.showMusic) {
+      if (this.music.show) {
         if (this.musicState) {
           this.$refs.music.pause()
         } else {
@@ -258,7 +286,30 @@ export default {
         }
       }
     },
-    // 10.获取所有用户数据
+    // 10.更新数据至indexDB
+    updateDataByKey (CompleteID, Award) {
+      if (window.indexedDB) {
+        const self = this
+        self.request = window.indexedDB.open(self.DBname, self.DBver)
+        self.request.onsuccess = function (event) {
+          const mydb = event.target.result
+          const trans = mydb.transaction(self.storeName.user, 'readwrite')
+          const store = trans.objectStore(self.storeName.user)
+          const request = store.get(CompleteID)
+          request.onsuccess = function (e) {
+            const temp = e.target.result
+            temp.Award = Award
+            store.put(temp)
+          }
+        }
+        self.request.onerror = function (event) {
+          alert(`打开失败,错误号：${event.target.errorCode}`)
+        }
+      } else {
+        alert('您的浏览器不支持IndexedDB数据库。')
+      }
+    },
+    // 11.获取所有用户数据
     getData (storeName, tempData) {
       if (window.indexedDB) {
         const self = this
@@ -312,7 +363,7 @@ export default {
 
 <style lang="less">
 .el-form-item__label{
-  color: gold;
+  color: gold !important;
 }
 </style>
 

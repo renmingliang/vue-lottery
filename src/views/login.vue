@@ -6,7 +6,7 @@
           <h3 class="title">{{msg}}</h3>
         </div>
         <el-form-item prop="password">
-          <el-input name="password" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"/>
+          <el-input name="username" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.username" autoComplete="on" placeholder="请输入密码"/>
           <span class="show-pwd" @click="showPwd">
             <i class="el-icon-view"></i>
           </span>
@@ -22,13 +22,29 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'login',
   data () {
-    return {}
+    // login--validate, 校验方式
+    const form = this.$store.state.login.form
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < form.username.length) {
+        callback(new Error(`密码不能少于${form.username.length}个长度`))
+      } else {
+        callback()
+      }
+    }
+    return {
+      // 登录密码
+      loginForm: {
+        username: form.username
+      },
+      // 校验规则
+      loginRules: {
+        username: [{ required: true, trigger: form.trigger, validator: validatePassword }]
+      }
+    }
   },
   computed: {
     ...mapGetters([
       'msg',
-      'loginForm',
-      'loginRules',
       'passwordType',
       'loginLoading'
     ])
@@ -45,8 +61,13 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.$store.dispatch({type: 'postLogin', data: this.loginForm}).then(res => {
-            console.log(`提交返回数据：${res.data}`)
-            this.$router.push({ path: '/onload' })
+            const result = res.data.result
+            if (result === '1') {
+              this.$router.push({ path: '/onload' })
+            } else {
+              alert('请输入正确的密码')
+              return false
+            }
           })
         } else {
           alert('请输入正确密码')

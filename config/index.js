@@ -2,6 +2,8 @@
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
+const proxy = require('../src/utils/proxyTable') // 代理请求
+
 const path = require('path')
 
 module.exports = {
@@ -10,19 +12,11 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-      '/test': {	// 测试环境
-        target: 'http://lottery2.baoxianadmin.com/',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/test/': ''
-        }
-      }
-    },
+    proxyTable: proxy.proxyTable,
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 9301, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    autoOpenBrowser: true,
+    autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
@@ -52,12 +46,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../lottery/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsRoot: path.resolve(__dirname, '../lottery'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

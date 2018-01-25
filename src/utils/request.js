@@ -4,8 +4,22 @@ import { Message } from 'element-ui'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
+  headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}, // `headers` 是即将被发送的自定义请求头
+  // `transformRequest` 允许在向服务器发送前，修改请求数据
+  // 只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
+  // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
+  transformRequest: [function (data) {
+    // 对 data 进行任意转换处理
+    let ret = []
+    for (let name in data) {
+      ret.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]))
+    }
+    return ret.join('&')
+  }],
   timeout: 5000 // request timeout
 })
+
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 // request interceptor
 service.interceptors.request.use(config => {

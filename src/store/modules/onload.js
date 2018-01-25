@@ -1,17 +1,16 @@
 import { getData } from '../../api'
 import * as types from '../mutation-types'
-import config from '../../utils/config'
-
-const merge = require('webpack-merge')
 
 // initial data
-const state = merge(config.onload.state, {
+const state = {
+  // 抽奖数据
+  data: {},
   step: {
     title: '',
     status: 'wait',
     description: '校验数据是否一致'
   } // 最后一步提示语
-})
+}
 
 // getters 从state中派生其他状态，应用于更新过滤数据，用于计算属性computed，主要针对动态数据
 const getters = {
