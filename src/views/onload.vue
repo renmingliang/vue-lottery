@@ -155,7 +155,7 @@ export default {
       for (const item of this.data.userData) {
         const tempImg = new Image()
         // 图片src地址
-        tempImg.src = `http://www.jaja365.cn${item.HeadImg}`
+        tempImg.src = item.HeadImg
         // 图片加载完成
         tempImg.addEventListener('load', () => {
           this.catchImg++

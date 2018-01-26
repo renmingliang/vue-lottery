@@ -4,14 +4,14 @@ const config = {
   // 1.登录页
   login: {
     // 登录请求地址
-    url: XXX,
+    url: '/zt_lottery/login',
     // 检测登陆状态
-    checkUrl: XXX,
+    checkUrl: '/zt_lottery/check_login',
     state: {
       // 当前公司提示语
       msg: '民太安集团年会抽奖系统',
       form: {
-        username: XXX,
+        username: 'admin',
         trigger: 'blur'
       }
     }
@@ -19,12 +19,12 @@ const config = {
   // 2.加载数据页
   onload: {
     // 获取数据地址
-    url: XXX
+    url: '/zt_lottery/list_member'
   },
   // 3.中奖活动页
   lottery: {
     // 回传中奖数据地址
-    url: XXX,
+    url: '/zt_lottery/add',
     state: {
       // 样式
       style: {

@@ -62,6 +62,7 @@ export default {
         if (valid) {
           this.$store.dispatch({type: 'postLogin', data: this.loginForm}).then(res => {
             const result = res.data.result
+            console.log(res.data)
             if (result === '1') {
               this.$router.push({ path: '/onload' })
             } else {

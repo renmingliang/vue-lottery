@@ -8,15 +8,9 @@ NProgress.configure({ showSpinner: false })// NProgress Configuration
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
-<<<<<<< HEAD
-  // has token
-  if (to.path === '/lottery') {
-    store.dispatch('checkLogin').then(res => { // 拉取user_info
-=======
   // 抽奖页检测登陆状态
   if (to.path === '/lottery') {
-    store.dispatch('checkLogin').then(res => { 
->>>>>>> 8bfe8675466f031d8db29eb878b780809987e5f2
+    store.dispatch('checkLogin').then(res => {
       console.log(res.data)
       if (res.data.result === '1') {
         next()

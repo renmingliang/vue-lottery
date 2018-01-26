@@ -12,6 +12,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import './assets/styles/common.less'// custom define global less
 
+import './mock' // mock request
 import './permission' // permission control
 
 Vue.use(Element, {

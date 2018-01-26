@@ -14,6 +14,7 @@
     "axios": "^0.17.1",
     "element-ui": "^2.0.11",
     "html2canvas": "^1.0.0-alpha.9",
+    "mockjs": "^1.0.1-beta3",
     "normalize.css": "^7.0.0",
     "nprogress": "^0.2.0",
     "vue": "^2.5.2",
