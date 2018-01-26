@@ -176,6 +176,12 @@ export default {
           return false
         }
         // 1.2抽奖池内剩余人数
+        this.total = 0
+        this.userData.map((item) => {
+          if (item.Award !== '0') {
+            this.total++
+          }
+        })
         const tempRoll = this.userData.length - this.total
         if (tempRoll <= this.maxTimes) {
           alert(`池内剩余总数${tempRoll}，不够本次抽取${this.maxTimes}！`)
@@ -202,21 +208,19 @@ export default {
       })
       // 3.1更新已抽中人数数目
       this.rollLen += this.rollIdArr.length
-      // 3.2更新累计抽中人数
-      this.total += this.rollIdArr.length
-      // 3.3回传中奖数据
-      const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
-      this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
-        console.log(res.data)
-        // 3.3重置开关
-        this.isBegin = false
-      })
-      // 3.4等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
+      // 3.2等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
       if (this.download.show) {
         setTimeout(() => {
           screenshot(this.maxAward, this.maxNum)
+          // 3.3重置开关
+          this.isBegin = false
         }, this.download.delay)
       }
+      // 3.4回传中奖数据
+      const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
+      this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
+        console.log(res.data)
+      })
       console.log(this.rollIdArr)
     },
     // 4.滚动主要函数
