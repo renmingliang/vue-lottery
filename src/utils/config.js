@@ -1,17 +1,17 @@
 
-// global config
+// global config 注意，XXX为示例名，需要根据自己项目修改
 const config = {
   // 1.登录页
   login: {
     // 登录请求地址
-    url: '/index.php/zt/zt_lottery/login',
+    url: XXX,
     // 检测登陆状态
-    checkUrl: '/index.php/zt/zt_lottery/check_login',
+    checkUrl: XXX,
     state: {
       // 当前公司提示语
       msg: '民太安集团年会抽奖系统',
       form: {
-        username: 'mta2018',
+        username: XXX,
         trigger: 'blur'
       }
     }
@@ -19,12 +19,12 @@ const config = {
   // 2.加载数据页
   onload: {
     // 获取数据地址
-    url: '/index.php/zt/zt_lottery/list_member'
+    url: XXX
   },
   // 3.中奖活动页
   lottery: {
     // 回传中奖数据地址
-    url: '/index.php/zt/zt_lottery/add/',
+    url: XXX,
     state: {
       // 样式
       style: {
