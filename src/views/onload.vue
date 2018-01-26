@@ -75,13 +75,15 @@ export default {
         })
         // 1.1.3.缓存头像
         .then(() => {
-          this.preLoadImg()
+          setTimeout(() => {
+            this.preLoadImg()
+          }, 800)
         })
         // 1.1.4.校验数据--注意这里延时3s后执行
         .then(() => {
           setTimeout(() => {
             this.validateData()
-          }, 3000)
+          }, 5000)
         })
     },
     // 2.删除本地表
