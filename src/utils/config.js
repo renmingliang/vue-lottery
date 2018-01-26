@@ -36,7 +36,7 @@ const config = {
         },
         // 当前抽奖年
         year: {
-          show: true,
+          show: false,
           img: require('../assets/images/2017.png')
         }
       },
@@ -67,7 +67,7 @@ const config = {
     },
     // 背景音乐
     music: {
-      show: true,
+      show: false,
       src: require('../assets/shiji.mp3') // 在请求资源路径时，需要require
     },
     // 参与规则

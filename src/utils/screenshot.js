@@ -53,7 +53,7 @@ function downloadFile (object) {
   element.click()
   setTimeout(() => {
     document.body.removeChild(element)
-  }, 600)
+  }, 300)
 }
 
 /**

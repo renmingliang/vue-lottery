@@ -10,7 +10,7 @@
           <ul>
             <li class="lottery-item" v-for="(list, index) in rollIdArr" :key="index">
               <div class="lottery-roll">
-                <div class="roll-item"><img :src="list.HeadImg"></div>
+                <div class="roll-item"><img :src="'http://www.jaja365.cn'+list.HeadImg"></div>
                 <div class="roll-item"><span>{{list.Num}}</span></div>
                 <div class="roll-item"><span>{{list.Name}}</span></div>
                 <div class="roll-item"><span>{{list.Company}}</span></div>
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="lottery-prize">
-        <el-form :inline="true">
+        <el-form>
           <el-form-item label="本轮奖项">
             <el-select @change="changeAward" v-model="maxAward" placeholder="请选择抽取奖项">
               <el-option
@@ -40,7 +40,6 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <br>
           <el-form-item label="单次抽取">
             <el-select @change="changeTimes" v-model="maxTimes" placeholder="请选择单次抽取人数">
               <el-option
@@ -53,6 +52,10 @@
             </el-select>
           </el-form-item>
         </el-form>
+      </div>
+      <div class="prize-box">
+        <img src="../assets/images/kindle.png">
+        <p>Kindle 6英寸 电纸书(wifi)</p>
       </div>
       <div v-if="rule.show" class="lottery-rule">
         <img :src="rule.img">
@@ -176,6 +179,12 @@ export default {
           return false
         }
         // 1.2抽奖池内剩余人数
+        this.total = 0
+        this.userData.map((item) => {
+          if (item.Award !== '0') {
+            this.total++
+          }
+        })
         const tempRoll = this.userData.length - this.total
         if (tempRoll <= this.maxTimes) {
           alert(`池内剩余总数${tempRoll}，不够本次抽取${this.maxTimes}！`)
@@ -202,21 +211,19 @@ export default {
       })
       // 3.1更新已抽中人数数目
       this.rollLen += this.rollIdArr.length
-      // 3.2更新累计抽中人数
-      this.total += this.rollIdArr.length
-      // 3.3回传中奖数据
-      const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
-      this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
-        console.log(res.data)
-        // 3.3重置开关
-        this.isBegin = false
-      })
-      // 3.4等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
+      // 3.2等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
       if (this.download.show) {
         setTimeout(() => {
           screenshot(this.maxAward, this.maxNum)
+          // 3.3重置开关
+          this.isBegin = false
         }, this.download.delay)
       }
+      // 3.4回传中奖数据
+      const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
+      this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
+        console.log(res.data)
+      })
       console.log(this.rollIdArr)
     },
     // 4.滚动主要函数
@@ -252,7 +259,7 @@ export default {
     },
     // 8.修改奖项及本轮人数
     changeAward (val) {
-      // 8.0修正本轮已抽取奖项人数
+      // 8.0重置本轮已抽取奖项人数
       this.rollLen = 0
       // 8.1本轮奖项总人数
       this.awardOptions.map((item) => {
@@ -363,11 +370,12 @@ export default {
 
 <style lang="less">
 .el-form-item__label{
-  color: gold !important;
+  color: rgba(227,183,27,0.9) !important;
 }
 </style>
 
 <style lang='less' scoped>
+@baseColor: rgba(227,183,27,0.9);
 @keyframes rotateMusic{
   0%{
     transform: rotate(0deg);
@@ -385,7 +393,7 @@ export default {
     width: 100%;
     height: 100%;
     .lottery-main{
-      width: 64%;
+      width: 66%;
       position: absolute;
       left: 50%;
       top: 23%;
@@ -395,8 +403,8 @@ export default {
         min-height: 460px;
       }
       .lottery-item{
-        height: 88px;
-        line-height: 88px;
+        height: 82px;
+        line-height: 82px;
         margin-top: 5px;
         text-align: center;
         background-image: url(../assets/images/roll.png);
@@ -417,7 +425,7 @@ export default {
             }
             img{
               border-radius: 50%;
-              height: 65px;
+              height: 60px;
               border: 1px solid #ccc;
             }
           }
@@ -425,13 +433,13 @@ export default {
       }
       .lottery-tips{
         font-size: 28px;
-        color: gold;
+        color: @baseColor;
         text-align: center;
         margin-bottom: 2%;
       }
     }
     .lottery-btn{
-      margin-top: 4%;
+      margin-top: 3%;
       padding: 0 15%;
       .btn-func{
         display: flex;
@@ -456,26 +464,43 @@ export default {
     }
     .lottery-prize{
       position: absolute;
-      left: 8%;
-      bottom: 5%;
-      color: gold;
+      width: 7%;
+      left: 1%;
+      bottom: 1%;
+      color: @baseColor;
       font-size: 18px;
       z-index: 1;
+    }
+    .prize-box{
+      position: absolute;
+      left: 12%;
+      bottom: 8%;
+      z-index: 1;
+      img{
+        width: 20%;
+        display: inline-block;
+      }
+      p{
+        display: inline-block;
+        vertical-align: bottom;
+        font-size: 16px;
+        color: @baseColor;
+      }
     }
     .lottery-rule{
       position: absolute;
       right: -4%;
-      bottom: 5%;
-      color: gold;
+      bottom: 8%;
+      color: @baseColor;
       z-index: 1;
       img{
-        width: 18%;
+        width: 20%;
         float: left;
         margin-right: 2%;
       }
       .lottery-txt{
         overflow: hidden;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.4;
       }
     }
