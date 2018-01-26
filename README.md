@@ -1,8 +1,8 @@
 # 简介
 
-> 基于vue.js抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐，以及PSD源文件
+> 基于vue.js抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
 
-> 技术栈：vue + vuex + vue-router + axios + elementUI + html2canvas + nprogress + less + ECMAjavascript6
+> 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAjavascript6
 
 本项目目前处于持续更新阶段，欢迎star，issue关注！
 
@@ -10,7 +10,7 @@
 ### 实现思路
 本项目主要有以下几个点需要`注意`：
 1. 为了保证数据安全，需要设置登录，在登录成功之后的前提下获取后台传递的数据，以及回传数据也需要验证是否已登录；
-2. 由于抽奖的数据都上千条，cookie和storage存储空间受限都不够用，依次考虑利用浏览器支持的indexDB来存储用户数据库，以及主要奖项和该奖项抽取的人数的；
+2. 这里利用mock来模拟数据，考虑正式抽奖的数据都上千条，cookie和storage存储空间受限都不够用，依次考虑利用浏览器支持的indexDB来存储用户数据库，以及主要奖项和该奖项抽取的人数的；
 3. 每次抽奖完成的结果，须返回给后台存储数据，以保障前后台数据一致性（实现具体抽奖的逻辑功能，不受限，取决于前后台同事自己沟通结果，本示例前端实现抽取，在[src/views/lottery](src/views/lottery.vue)文件内）；
 4. 记录单次抽奖人数，不论抽多少次，只要满足本轮奖项人数，即宣告本轮抽取结束，代码逻辑不以抽取多少次为依据；
 5. 同时每次抽中的用户数据需要三步处理：
@@ -47,19 +47,20 @@ data: {
 本项目配置文件位于[src/utils/config](src/utils/config.js)，按照注释相应地修改对应项就好。
 `注意`：XXX为示例名，需要依据自己项目来修改
 ```code
-// global config
+
+// global config 注意: 所有接口均为mock测试，项目中需要自己替换
 const config = {
   // 1.登录页
   login: {
     // 登录请求地址
-    url: XXX,
+    url: '/zt_lottery/login',
     // 检测登陆状态
-    checkUrl: XXX,
+    checkUrl: '/zt_lottery/check_login',
     state: {
       // 当前公司提示语
       msg: '民太安集团年会抽奖系统',
       form: {
-        username: XXX,
+        username: 'admin',
         trigger: 'blur'
       }
     }
@@ -67,12 +68,12 @@ const config = {
   // 2.加载数据页
   onload: {
     // 获取数据地址
-    url: XXX
+    url: '/zt_lottery/list_member'
   },
   // 3.中奖活动页
   lottery: {
     // 回传中奖数据地址
-    url: XXX,
+    url: '/zt_lottery/add',
     state: {
       // 样式
       style: {
@@ -84,7 +85,7 @@ const config = {
         },
         // 当前抽奖年
         year: {
-          show: true,
+          show: false,
           img: require('../assets/images/2017.png')
         }
       },
@@ -115,7 +116,7 @@ const config = {
     },
     // 背景音乐
     music: {
-      show: true,
+      show: false,
       src: require('../assets/shiji.mp3') // 在请求资源路径时，需要require
     },
     // 参与规则

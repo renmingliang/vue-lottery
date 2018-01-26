@@ -1,5 +1,5 @@
 
-// global config 注意，XXX为示例名，需要根据自己项目修改
+// global config 注意: 所有接口均为mock测试，项目中需要自己替换
 const config = {
   // 1.登录页
   login: {
