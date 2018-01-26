@@ -215,15 +215,15 @@ export default {
       if (this.download.show) {
         setTimeout(() => {
           screenshot(this.maxAward, this.maxNum)
-          // 3.3重置开关
-          this.isBegin = false
         }, this.download.delay)
       }
-      // 3.4回传中奖数据
+      // 3.3回传中奖数据
       const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
       this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
         console.log(res.data)
       })
+      // 3.4重置开关
+      this.isBegin = false
       console.log(this.rollIdArr)
     },
     // 4.滚动主要函数

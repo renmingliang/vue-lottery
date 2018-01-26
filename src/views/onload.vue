@@ -77,11 +77,11 @@ export default {
         .then(() => {
           this.preLoadImg()
         })
-        // 1.1.4.校验数据--注意这里延时1s后执行
+        // 1.1.4.校验数据--注意这里延时3s后执行
         .then(() => {
           setTimeout(() => {
             this.validateData()
-          }, 1000)
+          }, 3000)
         })
     },
     // 2.删除本地表

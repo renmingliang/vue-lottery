@@ -42,11 +42,11 @@ const config = {
       },
       // 是否需要下载抽奖截图
       download: {
-        show: true,
+        show: false,
         delay: 800
       },
       // 滚动间隔
-      intervalTime: 80,
+      intervalTime: 50,
       // 绑定键盘事件
       keyBand: {
         start: 'Enter',
