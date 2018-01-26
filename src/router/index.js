@@ -10,14 +10,14 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/lottery',
-      name: 'lottery',
-      component: _import('lottery')
-    },
-    {
       path: '/',
       name: 'login',
       component: _import('login')
+    },
+    {
+      path: '/lottery',
+      name: 'lottery',
+      component: _import('lottery')
     },
     {
       path: '/onload',
