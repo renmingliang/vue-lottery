@@ -7,7 +7,7 @@ const temp = {
 
 // 模拟用户数据
 const userData = []
-const userCount = 2000
+const userCount = 100
 for (let i = 1; i < userCount; i++) {
   userData.push(Mock.mock({
     Company: `公司测${i}`,
