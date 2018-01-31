@@ -19,8 +19,6 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-
 // request interceptor
 service.interceptors.request.use(config => {
   // Do something before request is sent

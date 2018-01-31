@@ -4,18 +4,12 @@ import * as types from '../mutation-types'
 // initial data
 const state = {
   // 抽奖数据
-  data: {},
-  step: {
-    title: '',
-    status: 'wait',
-    description: '校验数据是否一致'
-  } // 最后一步提示语
+  data: {}
 }
 
 // getters 从state中派生其他状态，应用于更新过滤数据，用于计算属性computed，主要针对动态数据
 const getters = {
-  data: state => state.data,
-  step: state => state.step
+  data: state => state.data
 }
 
 // mutations，同步数据，用于methods中commit调用
@@ -24,11 +18,6 @@ const mutations = {
   // 获取数据
   [types.GET_DATA] (state, payload) {
     state.data = payload.data
-  },
-
-  // 切换最终步骤状态
-  [types.TOGGLE_STEP] (state, payload) {
-    state.step = payload.data
   }
 }
 

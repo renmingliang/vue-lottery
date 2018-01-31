@@ -25,6 +25,11 @@ export default {
         show: false,
         tips: '叁'
       }, // 倒计时文字--叁贰壹
+      step: {
+        title: '',
+        status: 'wait',
+        description: '校验数据是否一致'
+      }, // 最后一步提示语
       getNum: 0, // 用户数据长度
       storeNum: 0, // 存储数据长度
       catchImg: 0, // 已缓存图片数量
@@ -43,8 +48,7 @@ export default {
       'storeName'
     ]),
     ...mapGetters([
-      'data',
-      'step'
+      'data'
     ]),
     // 利用计算属性绑定class
     classStop () {
@@ -65,7 +69,7 @@ export default {
         // 1.1.1获取数据
         .then(() => {
           this.getNum = this.data.userData.length
-          if (this.getNum !== 0) {
+          if (this.data.hasOwnProperty('userData')) {
             this.isActive = 1
           }
         })
@@ -157,6 +161,7 @@ export default {
       for (const item of this.data.userData) {
         const tempImg = new Image()
         // 图片src地址
+        // tempImg.src = 'http://www.jaja365.cn' + item.HeadImg
         tempImg.src = item.HeadImg
         // 图片加载完成
         tempImg.addEventListener('load', () => {
@@ -173,7 +178,7 @@ export default {
           status: 'success',
           description: '3秒后进入抽奖页面'
         }
-        this.$store.commit({type: 'TOGGLE_STEP', data: corStep})
+        this.step = corStep
         this.stop.show = true
         this.isActive = 4
         let endTime = 3
@@ -194,7 +199,7 @@ export default {
           status: 'error',
           description: '请重新进入或者 强制刷新本页面'
         }
-        this.$store.commit({type: 'TOGGLE_STEP', data: errStep})
+        this.step = errStep
       }
     }
   },

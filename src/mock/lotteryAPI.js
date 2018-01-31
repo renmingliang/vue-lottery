@@ -1,8 +1,16 @@
 import Mock from 'mockjs'
 const temp = {
-  admin: {errorInfo: '登陆成功', result: '1', data: ''},
+  mta2018: {errorInfo: '登陆成功', result: '1', data: ''},
+  err: {errorInfo: '密码错误', result: '0', data: ''},
   check: {errorInfo: '您已经登陆过了', result: '1', data: ''},
+  noPer: {errorInfo: '请您先登陆', result: '0', data: ''},
   add: {errorInfo: '成功', result: '1', data: ''}
+}
+function getQueryString (str, name) {
+  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+  var r = str.match(reg)
+  if (r != null) return decodeURIComponent(r[2])
+  return ''
 }
 
 // 模拟用户数据
@@ -10,13 +18,13 @@ const userData = []
 const userCount = 100
 for (let i = 1; i < userCount; i++) {
   userData.push(Mock.mock({
-    Company: `公司测${i}`,
-    CompleteID: '@increment',
-    HeadImg: `http://test.baoxianadmin.com/static/m/images/headImage/${i}.jpg`,
-    Name: `测${i}`,
-    Num: `M${i}`,
-    OpenID: '@increment',
-    Award: '0'
+    Company: '@city(true)', // 公司名
+    CompleteID: '@increment', // ID
+    HeadImg: `http://test.baoxianadmin.com/static/m/images/headImage/${i}.jpg`, // 微信头像
+    Name: '@cname', // 姓名
+    Num: `M${i}`, // 工号
+    OpenID: '@increment', // 微信ID
+    Award: '0' // 奖项，'0'表示未中奖
   }))
 }
 
@@ -29,17 +37,28 @@ const type = [
   {value: '5', label: '其他', number: ''}
 ]
 
+/* const storage = 'isLogin'
+const status = localStorage.getItem(storage)
+setTimeout(() => {
+  localStorage.removeItem(storage)
+}, 6000 * 10) */
+
 export default {
   postLogin: config => {
-    // console.log(config.body)
-    const params = config.body.split('=')[1]
+    const params = getQueryString(config.body, 'username')
     if (temp[params]) {
+      // window.localStorage.setItem(storage, 1)
       return temp[params]
     } else {
-      return {errorInfo: '密码错误', result: '0', data: ''}
+      return temp['err']
     }
   },
   checkLogin: config => {
+    /* if (status) {
+      return temp['check']
+    } else {
+      return temp['noPer']
+    } */
     return temp['check']
   },
   getDatas: () => {

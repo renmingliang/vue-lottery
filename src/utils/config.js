@@ -3,27 +3,27 @@
 const config = {
   // 1.登录页
   login: {
-    // 登录请求地址
+    // 登录请求地址/index.php/zt/zt_lottery/login
     url: '/zt_lottery/login',
-    // 检测登陆状态
+    // 检测登陆状态/index.php/zt/zt_lottery/check_login
     checkUrl: '/zt_lottery/check_login',
     state: {
       // 当前公司提示语
       msg: '民太安集团年会抽奖系统',
       form: {
-        username: 'admin',
+        username: 'mta2018',
         trigger: 'blur'
       }
     }
   },
   // 2.加载数据页
   onload: {
-    // 获取数据地址
+    // 获取数据地址/index.php/zt/zt_lottery/list_member
     url: '/zt_lottery/list_member'
   },
   // 3.中奖活动页
   lottery: {
-    // 回传中奖数据地址
+    // 回传中奖数据地址/index.php/zt/zt_lottery/add
     url: '/zt_lottery/add',
     state: {
       // 样式

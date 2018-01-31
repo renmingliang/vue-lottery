@@ -18,12 +18,12 @@
             </li>
           </ul>
         </div>
-        <div class="lottery-btn">
-          <div class="btn-func">
-            <button @click="beginRoll">开始</button>
-            <img v-if="style.year.show" :src="style.year.img">
-            <button @click="stopRoll">抽取</button>
-          </div>
+      </div>
+      <div class="lottery-btn">
+        <div class="btn-func">
+          <button @click="beginRoll">开始</button>
+          <img v-if="style.year.show" :src="style.year.img">
+          <button @click="stopRoll">抽取</button>
         </div>
       </div>
       <div class="lottery-prize">
@@ -211,7 +211,7 @@ export default {
       })
       // 3.1更新已抽中人数数目
       this.rollLen += this.rollIdArr.length
-      // 3.2等待一秒后执行截屏下载，应为渲染是结果是异步的，需要时间
+      // 3.2延迟时间后执行截屏下载，应为渲染是结果是异步的，需要时间
       if (this.download.show) {
         setTimeout(() => {
           screenshot(this.maxAward, this.maxNum)
@@ -221,9 +221,9 @@ export default {
       const temp = this.rollIdArr.map((item) => { return item.Num }).join(',')
       this.$store.dispatch({type: 'postDatas', Num: temp, Award: this.maxAward}).then(res => {
         console.log(res.data)
+        // 3.4重置开关
+        this.isBegin = false
       })
-      // 3.4重置开关
-      this.isBegin = false
       console.log(this.rollIdArr)
     },
     // 4.滚动主要函数
@@ -369,8 +369,15 @@ export default {
 </script>
 
 <style lang="less">
-.el-form-item__label{
-  color: rgba(227,183,27,0.9) !important;
+.lottery-prize{
+  .el-form-item__label{
+    color: rgba(227,183,27,0.9);
+  }
+  .el-input__inner{
+    background-color: rgba(138, 9, 0, 0.6);
+    color: rgba(227,183,27,0.9);
+    border: none;
+  }
 }
 </style>
 
@@ -396,16 +403,13 @@ export default {
       width: 66%;
       position: absolute;
       left: 50%;
-      top: 23%;
+      top: 25%;
       transform: translate3d(-50%,0,0);
       z-index: 2;
-      ul{
-        min-height: 460px;
-      }
       .lottery-item{
         height: 82px;
         line-height: 82px;
-        margin-top: 5px;
+        margin-top: 1%;
         text-align: center;
         background-image: url(../assets/images/roll.png);
         background-repeat: no-repeat;
@@ -435,13 +439,18 @@ export default {
         font-size: 28px;
         color: @baseColor;
         text-align: center;
-        margin-bottom: 2%;
+        margin-bottom: 1%;
       }
     }
     .lottery-btn{
-      margin-top: 3%;
-      padding: 0 15%;
+      position: absolute;
+      width: 66%;
+      left: 50%;
+      bottom: 12%;
+      transform: translate3d(-50%, 0, 0);
+      z-index: 2;
       .btn-func{
+        padding: 0 15%;
         display: flex;
         justify-content: space-around;
         button{
@@ -474,7 +483,7 @@ export default {
     .prize-box{
       position: absolute;
       left: 12%;
-      bottom: 8%;
+      bottom: 7%;
       z-index: 1;
       img{
         width: 20%;
@@ -506,8 +515,8 @@ export default {
     }
     .lottery-music{
       position: absolute;
-      left: 2%;
-      bottom: 5%;
+      left: 2.5%;
+      top: 6.5%;
       cursor: pointer;
       .music-btn{
         width: 3em;

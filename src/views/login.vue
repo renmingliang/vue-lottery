@@ -5,7 +5,7 @@
         <div class="title-container">
           <h3 class="title">{{msg}}</h3>
         </div>
-        <el-form-item prop="password">
+        <el-form-item prop="username">
           <el-input name="username" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.username" autoComplete="on" placeholder="请输入密码"/>
           <span class="show-pwd" @click="showPwd">
             <i class="el-icon-view"></i>
@@ -97,7 +97,8 @@ export default {
     }
   }
   .el-form-item__error{
-    color: #000;
+    color: red;
+    font-weight: bold;
   }
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);

@@ -2,7 +2,7 @@
 
 > 基于vue.js抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
 
-> 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAjavascript6
+> 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAScript6
 
 本项目目前处于持续更新阶段，欢迎star，issue关注！
 
@@ -45,7 +45,7 @@ data: {
 ```
 
 本项目配置文件位于[src/utils/config](src/utils/config.js)，按照注释相应地修改对应项就好。
-`注意`：XXX为示例名，需要依据自己项目来修改
+
 ```code
 
 // global config 注意: 所有接口均为mock测试，项目中需要自己替换
@@ -60,7 +60,7 @@ const config = {
       // 当前公司提示语
       msg: '民太安集团年会抽奖系统',
       form: {
-        username: 'admin',
+        username: 'mta2018',
         trigger: 'blur'
       }
     }
