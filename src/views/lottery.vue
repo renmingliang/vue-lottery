@@ -26,7 +26,7 @@
           <button @click="stopRoll">抽取</button>
         </div>
       </div>
-      <div class="lottery-prize">
+      <div class="lottery-options">
         <el-form>
           <el-form-item label="本轮奖项">
             <el-select @change="changeAward" v-model="maxAward" placeholder="请选择抽取奖项">
@@ -53,7 +53,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="prize-box">
+      <div class="lottery-prize">
         <img src="../assets/images/kindle.png">
         <p>Kindle 6英寸 电纸书(wifi)</p>
       </div>
@@ -369,7 +369,7 @@ export default {
 </script>
 
 <style lang="less">
-.lottery-prize{
+.lottery-options{
   .el-form-item__label{
     color: rgba(227,183,27,0.9);
   }
@@ -407,8 +407,8 @@ export default {
       transform: translate3d(-50%,0,0);
       z-index: 2;
       .lottery-item{
-        height: 82px;
-        line-height: 82px;
+        height: 7.6vh;
+        line-height: 7.6vh;
         margin-top: 1%;
         text-align: center;
         background-image: url(../assets/images/roll.png);
@@ -420,26 +420,31 @@ export default {
           display: flex;
           .roll-item{
             width: 20%;
-            font-size: 36px;
+            font-size: 3.6vh;
             display: flex;
             justify-content: center;
             align-items: center;
             &:last-child{
               width: 40%;
             }
+            span{
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+            }
             img{
               border-radius: 50%;
-              height: 60px;
+              height: 5.6vh;
               border: 1px solid #ccc;
             }
           }
         }
       }
       .lottery-tips{
-        font-size: 28px;
+        font-size: 3vh;
         color: @baseColor;
         text-align: center;
-        margin-bottom: 1%;
+        margin-bottom: 2%;
       }
     }
     .lottery-btn{
@@ -459,9 +464,9 @@ export default {
           background-size: cover;
           background-position-x: -4px;
           color: #fff;
-          padding: 10px 36px;
+          padding: 1vh 3.6vh;
           margin: 0 1%;
-          font-size: 26px;
+          font-size: 2.6vh;
           border-radius: 7px;
           outline: none;
           cursor: pointer;
@@ -471,45 +476,45 @@ export default {
         }
       }
     }
-    .lottery-prize{
+    .lottery-options{
       position: absolute;
       width: 7%;
       left: 1%;
       bottom: 1%;
       color: @baseColor;
-      font-size: 18px;
+      font-size: 1.8vh;
       z-index: 1;
     }
-    .prize-box{
+    .lottery-prize{
       position: absolute;
       left: 12%;
       bottom: 7%;
       z-index: 1;
       img{
-        width: 20%;
+        width: 18%;
         display: inline-block;
       }
       p{
         display: inline-block;
         vertical-align: bottom;
-        font-size: 16px;
+        font-size: 1.6vh;
         color: @baseColor;
       }
     }
     .lottery-rule{
       position: absolute;
-      right: -4%;
-      bottom: 8%;
+      right: -6vw;
+      bottom: 7vh;
       color: @baseColor;
       z-index: 1;
       img{
-        width: 20%;
+        width: 18%;
         float: left;
         margin-right: 2%;
       }
       .lottery-txt{
         overflow: hidden;
-        font-size: 16px;
+        font-size: 1.6vh;
         line-height: 1.4;
       }
     }

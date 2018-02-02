@@ -7,7 +7,13 @@
 本项目目前处于持续更新阶段，欢迎star，issue关注！
 
 ## 说明
+
+### 在线demo
+
+> [点击查看](https://renmingliang.github.io/vue-lottery)
+
 ### 实现思路
+
 本项目主要有以下几个点需要`注意`：
 1. 为了保证数据安全，需要设置登录，在登录成功之后的前提下获取后台传递的数据，以及回传数据也需要验证是否已登录；
 2. 这里利用mock来模拟数据，考虑正式抽奖的数据都上千条，cookie和storage存储空间受限都不够用，依次考虑利用浏览器支持的indexDB来存储用户数据库，以及主要奖项和该奖项抽取的人数的；
@@ -78,7 +84,7 @@ const config = {
       // 样式
       style: {
         // 主背景图
-        bg: {
+        bg: { // 在请求资源路径时，需要require
           backgroundImage: `url(${require('../assets/images/background.png')})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: '100% 100%'
@@ -91,11 +97,11 @@ const config = {
       },
       // 是否需要下载抽奖截图
       download: {
-        show: true,
+        show: false,
         delay: 800
       },
       // 滚动间隔
-      intervalTime: 80,
+      intervalTime: 50,
       // 绑定键盘事件
       keyBand: {
         start: 'Enter',
@@ -117,7 +123,7 @@ const config = {
     // 背景音乐
     music: {
       show: false,
-      src: require('../assets/shiji.mp3') // 在请求资源路径时，需要require
+      src: require('../assets/shiji.mp3')
     },
     // 参与规则
     rule: {
@@ -130,20 +136,24 @@ const config = {
 ```
 
 ## 功能
+
 1. 抽奖前，选择需要抽取的奖项
 2. 点击开始抽奖按钮(或Enter回车键)，数据滚动
 3. 点击抽取(或space空格键)结束滚动，显示中奖人员
 4. 再点击开始抽取进入第2步循环，若完成本轮抽取，则进入第1步选择抽取其他奖项
 
 ## 截图
+
 一。界面截图：
-针对1920*1080大屏以上显示，不适配移动端，以下为该项目主要界面截图：
+
+针对1920*1080大屏设计显示，当然也适配其他PC端，以下为该项目主要界面截图：
 
 ![登录界面](screenshot/1.png)
 ![数据加载界面](screenshot/2.png)
 ![抽奖界面](screenshot/3.gif)
 
 二。抽奖截屏：
+
 ![截屏示例](screenshot/4.gif)
 
 自动保存的抽奖截图文件至本地思路：

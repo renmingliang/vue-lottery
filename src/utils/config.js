@@ -3,9 +3,9 @@
 const config = {
   // 1.登录页
   login: {
-    // 登录请求地址/index.php/zt/zt_lottery/login
+    // 登录请求地址
     url: '/zt_lottery/login',
-    // 检测登陆状态/index.php/zt/zt_lottery/check_login
+    // 检测登陆状态
     checkUrl: '/zt_lottery/check_login',
     state: {
       // 当前公司提示语
@@ -18,18 +18,18 @@ const config = {
   },
   // 2.加载数据页
   onload: {
-    // 获取数据地址/index.php/zt/zt_lottery/list_member
+    // 获取数据地址
     url: '/zt_lottery/list_member'
   },
   // 3.中奖活动页
   lottery: {
-    // 回传中奖数据地址/index.php/zt/zt_lottery/add
+    // 回传中奖数据地址
     url: '/zt_lottery/add',
     state: {
       // 样式
       style: {
         // 主背景图
-        bg: {
+        bg: { // 在请求资源路径时，需要require
           backgroundImage: `url(${require('../assets/images/background.png')})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: '100% 100%'
@@ -68,7 +68,7 @@ const config = {
     // 背景音乐
     music: {
       show: false,
-      src: require('../assets/shiji.mp3') // 在请求资源路径时，需要require
+      src: require('../assets/shiji.mp3')
     },
     // 参与规则
     rule: {

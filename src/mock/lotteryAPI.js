@@ -15,8 +15,7 @@ function getQueryString (str, name) {
 
 // 模拟用户数据
 const userData = []
-const userCount = 100
-for (let i = 1; i < userCount; i++) {
+for (let i = 1; i < 100; i++) {
   userData.push(Mock.mock({
     Company: '@city(true)', // 公司名
     CompleteID: '@increment', // ID
@@ -28,6 +27,7 @@ for (let i = 1; i < userCount; i++) {
   }))
 }
 
+// 奖项类别
 const type = [
   {value: '9', label: '特等奖', number: '3'},
   {value: '1', label: '一等奖', number: '5'},
@@ -37,29 +37,30 @@ const type = [
   {value: '5', label: '其他', number: ''}
 ]
 
-/* const storage = 'isLogin'
-const status = localStorage.getItem(storage)
+// 校验登录状态,维持15分钟登录
+const storage = 'isLogin'
 setTimeout(() => {
   localStorage.removeItem(storage)
-}, 6000 * 10) */
+}, 6000 * 150)
 
 export default {
   postLogin: config => {
     const params = getQueryString(config.body, 'username')
     if (temp[params]) {
-      // window.localStorage.setItem(storage, 1)
+      localStorage.setItem(storage, 1)
       return temp[params]
     } else {
+      localStorage.removeItem(storage)
       return temp['err']
     }
   },
   checkLogin: config => {
-    /* if (status) {
+    const status = localStorage.getItem(storage)
+    if (status) {
       return temp['check']
     } else {
       return temp['noPer']
-    } */
-    return temp['check']
+    }
   },
   getDatas: () => {
     return {
