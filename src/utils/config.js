@@ -10,9 +10,11 @@ const config = {
     state: {
       // 当前公司提示语
       msg: '民太安集团年会抽奖系统',
+      // 登录表单
       form: {
         username: 'mta2018',
-        trigger: 'blur'
+        trigger: 'blur',
+        show: true
       }
     }
   },

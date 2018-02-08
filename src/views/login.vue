@@ -34,7 +34,7 @@ export default {
     return {
       // 登录密码
       loginForm: {
-        username: form.username
+        username: form.show ? form.username : ''
       },
       // 校验规则
       loginRules: {

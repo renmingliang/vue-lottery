@@ -67,7 +67,8 @@ const config = {
       msg: '民太安集团年会抽奖系统',
       form: {
         username: 'mta2018',
-        trigger: 'blur'
+        trigger: 'blur',
+        show: true
       }
     }
   },

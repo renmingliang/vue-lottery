@@ -255,7 +255,7 @@ export default {
     // 7.修改单次抽取个数
     changeTimes (val) {
       const rnd = this.getRand()
-      this.rollIdArr = this.userData.slice(rnd, Number(val) + rnd)
+      this.rollIdArr = this.userData.slice(rnd, rnd + Number(val))
     },
     // 8.修改奖项及本轮人数
     changeAward (val) {
