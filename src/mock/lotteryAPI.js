@@ -19,7 +19,7 @@ for (let i = 1; i < 100; i++) {
   userData.push(Mock.mock({
     Company: '@city(true)', // 公司名
     CompleteID: '@increment', // ID
-    HeadImg: `http://test.baoxianadmin.com/static/m/images/headImage/${i}.jpg`, // 微信头像
+    HeadImg: `@image(200x200, @color, #FFF, mock-${i})`, // 微信头像
     Name: '@cname', // 姓名
     Num: `M${i}`, // 工号
     OpenID: '@increment', // 微信ID

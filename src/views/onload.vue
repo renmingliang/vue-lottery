@@ -33,19 +33,19 @@ export default {
       getNum: 0, // 用户数据长度
       storeNum: 0, // 存储数据长度
       catchImg: 0, // 已缓存图片数量
-      isActive: 0 // 步骤流程
+      isActive: 0, // 步骤流程
+      timer: null // 数据校验执行定时器对象,类似ajax的timeout定时器
     }
   },
   created () {
     this.ready()
   },
-  mounted () {},
-  components: {},
   computed: {
     ...mapState([
       'DBname',
       'DBver',
-      'storeName'
+      'storeName',
+      'timeout'
     ]),
     ...mapGetters([
       'data'
@@ -79,15 +79,21 @@ export default {
         })
         // 1.1.3.缓存头像
         .then(() => {
+          // 由于indexDB存取数据异步，定时器延迟
           setTimeout(() => {
             this.preLoadImg()
           }, 800)
+          console.log(this.timeout)
         })
-        // 1.1.4.校验数据--注意这里延时3s后执行
+        // 1.1.4.校验数据--等待timeout后抛出错误
         .then(() => {
-          setTimeout(() => {
+          this.timer = setTimeout(() => {
             this.validateData()
-          }, 5000)
+          }, this.timeout)
+        })
+        // 1.1.5.捕获错误
+        .catch((err) => {
+          console.log(err)
         })
     },
     // 2.删除本地表
@@ -161,7 +167,6 @@ export default {
       for (const item of this.data.userData) {
         const tempImg = new Image()
         // 图片src地址
-        // tempImg.src = 'http://www.jaja365.cn' + item.HeadImg
         tempImg.src = item.HeadImg
         // 图片加载完成
         tempImg.addEventListener('load', () => {
@@ -173,6 +178,8 @@ export default {
     validateData () {
       this.isActive = 3
       if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
+        // 6.1.1清除抛出错误定时器对象
+        clearTimeout(this.timer)
         const corStep = {
           title: '成功',
           status: 'success',
@@ -180,6 +187,7 @@ export default {
         }
         this.step = corStep
         this.stop.show = true
+        // 6.1.2.进入下一步，显示大屏倒计时
         this.isActive = 4
         let endTime = 3
         const stopTimer = setInterval(() => {
@@ -197,14 +205,20 @@ export default {
         const errStep = {
           title: '失败',
           status: 'error',
-          description: '请重新进入或者 强制刷新本页面'
+          description: '请重新进入或者 刷新本页面'
         }
         this.step = errStep
       }
     }
   },
-  watch: {},
-  filters: {}
+  watch: {
+    // 检测图片加载是否完成
+    catchImg (val) {
+      if (val === this.getNum) {
+        this.validateData()
+      }
+    }
+  }
 }
 </script>
 

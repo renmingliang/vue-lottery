@@ -8,8 +8,8 @@ const config = {
     // 检测登陆状态
     checkUrl: '/zt_lottery/check_login',
     state: {
-      // 当前公司提示语
-      msg: '民太安集团年会抽奖系统',
+      // 提示语
+      msg: '年会抽奖系统',
       // 登录表单
       form: {
         username: 'mta2018',
@@ -44,7 +44,7 @@ const config = {
       },
       // 是否需要下载抽奖截图
       download: {
-        show: false,
+        show: true,
         delay: 800
       },
       // 滚动间隔
@@ -61,12 +61,14 @@ const config = {
     // indexDB名称
     DBname: 'lottery2018',
     // indexDB版本
-    DBver: '2',
+    DBver: '3',
     // indexDB存储表名称
     storeName: {
       user: 'user', // 用户
       award: 'type' // 奖项
     },
+    // 校验数据--等待timeout执行
+    timeout: 25000,
     // 背景音乐
     music: {
       show: true,

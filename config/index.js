@@ -2,8 +2,6 @@
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
-const proxy = require('../src/utils/proxyTable') // 代理请求
-
 const path = require('path')
 
 module.exports = {
@@ -12,7 +10,7 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: proxy.proxyTable,
+    proxyTable: {},
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 9301, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
