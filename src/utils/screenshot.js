@@ -63,7 +63,7 @@ function downloadFile (object) {
  */
 function screenshot (award, num) {
   const el = document.querySelector('.lottery-user')
-  html2canvas(el).then(function (canvas) {
+  html2canvas(el, {allowTaint: true}).then(function (canvas) {
     document.body.appendChild(canvas)
     const capture = convertCanvasToImage(canvas)
     const temp = {
