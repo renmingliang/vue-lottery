@@ -8,7 +8,7 @@
 
 ## 说明
 
-### 在线demo
+### 示例地址
 
 > [点击查看](https://renmingliang.github.io/vue-lottery)
 
