@@ -72,7 +72,7 @@ const config = {
     // 背景音乐
     music: {
       show: true,
-      src: require('../assets/shiji.mp3')
+      src: require('../assets/media/shiji.mp3')
     },
     // 参与规则
     rule: {

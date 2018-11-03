@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 import { Message } from 'element-ui'
 
 // create an axios instance
@@ -10,11 +11,7 @@ const service = axios.create({
   // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
   transformRequest: [function (data) {
     // 对 data 进行任意转换处理
-    let ret = []
-    for (let name in data) {
-      ret.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]))
-    }
-    return ret.join('&')
+    return qs.stringify(data)
   }],
   timeout: 5000 // request timeout
 })

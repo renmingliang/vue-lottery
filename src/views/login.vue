@@ -1,32 +1,45 @@
 <template>
   <div class="login-container">
-    <div class="login-inner">
-      <el-form class="login-form" @submit.native.prevent :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
-        <div class="title-container">
-          <h3 class="title">{{msg}}</h3>
-        </div>
-        <el-form-item prop="username">
-          <el-input name="username" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.username" autoComplete="on" placeholder="请输入密码"/>
+    <el-form class="login-form" @submit.native.prevent :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
+      <h3 class="title">{{msg}}</h3>
+      <el-form-item prop="username">
+        <el-input name="username" type="text" maxlength="20" v-model.trim="loginForm.username" placeholder="账户名" clearable/>
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input name="password" maxlength="20" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password"
+          placeholder="请输入密码（随便输）"></el-input>
           <span class="show-pwd" @click="showPwd">
             <i class="el-icon-view"></i>
           </span>
-        </el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loginLoading" @click.native.prevent="handleLogin">进入</el-button>
-      </el-form>
-    </div>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" style="width:100%;" :loading="loginLoading" @click.native.prevent="handleLogin">
+          登录系统
+        </el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { Message } from 'element-ui'
+
 export default {
   name: 'login',
   data () {
     // login--validate, 校验方式
     const form = this.$store.state.login.form
-    const validatePassword = (rule, value, callback) => {
+    const validateUsername = (rule, value, callback) => {
       if (value.length < form.username.length) {
-        callback(new Error(`密码不能少于${form.username.length}个长度`))
+        callback(new Error(`账户名不能少于${form.username.length}个长度`))
+      } else {
+        callback()
+      }
+    }
+    const validatePassword = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('密码不能为空'))
       } else {
         callback()
       }
@@ -34,11 +47,13 @@ export default {
     return {
       // 登录密码
       loginForm: {
-        username: form.show ? form.username : ''
+        username: '',
+        password: ''
       },
       // 校验规则
       loginRules: {
-        username: [{ required: true, trigger: form.trigger, validator: validatePassword }]
+        username: [{ required: true, trigger: form.trigger, validator: validateUsername }],
+        password: [{ required: true, trigger: form.trigger, validator: validatePassword }]
       }
     }
   },
@@ -66,76 +81,101 @@ export default {
             if (result === '1') {
               this.$router.push({ path: '/onload' })
             } else {
-              alert('请输入正确的密码')
+              Message({
+                message: '请求异常，稍后重试',
+                type: 'warning'
+              })
               return false
             }
           })
-        } else {
-          alert('请输入正确密码')
-          return false
         }
       })
     }
   }
 }
 </script>
-<style lang="less">
+
+<style rel="stylesheet/scss" lang="less">
+@bg:#2d3a4b;
+@light_gray:#eee;
+
 /* reset element-ui css */
 .login-container {
   .el-input {
-    width: 90%;
-    float: left;
+    display: inline-block;
+    height: 47px;
     input {
       background: transparent;
-      border: 0;
+      border: 0px;
       -webkit-appearance: none;
-      border-radius: 0;
+      border-radius: 0px;
+      padding: 12px 5px 12px 15px;
+      color: @light_gray;
+      height: 47px;
       &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px #2d3a4b inset !important;
+        box-shadow: 0 0 0px 1000px @bg inset !important;
         -webkit-text-fill-color: #fff !important;
       }
     }
   }
-  .el-form-item__error{
-    color: red;
-    font-weight: bold;
-  }
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: #fff;
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
+    color: #454545;
   }
 }
 </style>
-<style lang="less" scoped>
-.login-container{
-  width: 100%;
+
+<style rel="stylesheet/scss" lang="less" scoped>
+@bg:#2d3a4b;
+@dark_gray:#889aa4;
+@light_gray:#eee;
+@bg_form: #333;
+@bg_shadow: #545454;
+
+.login-container {
+  position: fixed;
   height: 100%;
-  background-color: #2d3a4b;
-  position: relative;
-  .login-inner{
-    text-align: center;
+  width: 100%;
+  background-color: @bg;
+  .login-form {
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 40%;
     width: 520px;
-    height: 576px;
     padding: 35px 35px 15px 35px;
-    transform: translate3d(-50%, -50%, 0);
-    background: url(../assets/images/login.jpg) no-repeat;
-    background-size: 100% 100%;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.58);
-    border-radius: 25px;
-    .login-form{
-      .title-container{
-        margin-top: 90px;
-        margin-bottom: 90px;
-        font-size: 30px;
-        h3{
-          font-weight: bold;
-        }
-      }
+    transform: translate(-50%, -50%);
+    background-color: @bg_form;
+    border-radius: 10px;
+    box-shadow: 0 0 10px @bg_shadow;
+  }
+  .svg-container {
+    padding: 6px 5px 6px 15px;
+    color: @dark_gray;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+    &_login {
+      font-size: 20px;
     }
+  }
+  .title {
+    font-size: 26px;
+    font-weight: 400;
+    color: @light_gray;
+    margin: 0px auto 50px auto;
+    text-align: center;
+    font-weight: bold;
+  }
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: @dark_gray;
+    cursor: pointer;
+    user-select: none;
   }
 }
 </style>
