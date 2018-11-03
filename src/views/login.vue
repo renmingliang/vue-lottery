@@ -31,8 +31,8 @@ export default {
     // login--validate, 校验方式
     const form = this.$store.state.login.form
     const validateUsername = (rule, value, callback) => {
-      if (value.length < form.username.length) {
-        callback(new Error(`账户名不能少于${form.username.length}个长度`))
+      if (value !== form.username) {
+        callback(new Error(`账户名默认：${form.username}`))
       } else {
         callback()
       }
@@ -47,7 +47,7 @@ export default {
     return {
       // 登录密码
       loginForm: {
-        username: '',
+        username: form.username,
         password: ''
       },
       // 校验规则

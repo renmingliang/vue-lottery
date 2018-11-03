@@ -150,7 +150,7 @@ const config = {
 针对1920*1080大屏设计显示，当然也适配其他PC端，以下为该项目主要界面截图：
 
 ![登录界面](screenshot/1.png)
-![数据加载界面](screenshot/2.png)
+![数据加载界面](screenshot/2.gif)
 ![抽奖界面](screenshot/3.gif)
 
 二。抽奖截屏：
