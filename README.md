@@ -124,7 +124,7 @@ const config = {
     // 背景音乐
     music: {
       show: false,
-      src: require('../assets/shiji.mp3')
+      src: require('../assets/media/shiji.mp3')
     },
     // 参与规则
     rule: {
@@ -161,7 +161,7 @@ const config = {
 1. 实现的流程逻辑在[src/utils/screenshot](src/utils/screenshot.js)文件中；
 2. 由于浏览器browser不支持node.js的模块fs读写文件，因而本示例采用`html2canvas`来完成截图功能，具体的使用自行百度或谷歌；
 3. 截完屏，最主要的是需要自动保存至本地，利用a标签的download和herf属性可以实现，通过在结束时，自动调用click的事件来触发；
-4. 最后剩余一个`BUG`，在截屏里面，是没有将头像获取下来，经查阅资料发现，是由于头像采用的mockjs模拟的，而项目代码又部署在另外一个服务器，因而出现跨越情况导致此情况出现，解决办法:在`html2canvas`中添加参数 ==> 允许跨域：allowTaint: true；
+4. 最后剩余一个`BUG`，在截屏里面，是没有将头像获取下来，经查阅资料发现，是由于头像采用的mockjs模拟的，而项目代码又部署在另外一个服务器，因而出现跨越情况导致此情况出现，解决办法:在`html2canvas`中添加参数 ==> 允许跨域：allowTaint: true，服务器地址运行跨越，即设置 [`CORS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
 
 ## 开发
 
