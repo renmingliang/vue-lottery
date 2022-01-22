@@ -177,7 +177,7 @@ cd vue-lottery
 # 安装依赖
 npm install
 
-# 本地浏览器地址：localhost:9301
+# 本地浏览器地址
 npm run dev
 
 # 发布正式版本
