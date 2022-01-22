@@ -1,10 +1,12 @@
 # 简介
 
-> 基于vue.js抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
+> 基于vue.js(2.x)抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
 
 > 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAScript6
 
-本项目目前处于持续更新阶段，欢迎star，issue关注！
+本项目基于`vuejs(2.x)`已暂告结束；
+基于`vue.js(3.x)`正开发中；
+欢迎star or fork 关注！
 
 ## 说明
 
@@ -184,5 +186,3 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

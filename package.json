@@ -1,7 +1,7 @@
 {
-  "name": "lottery",
+  "name": "vue-lottery",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "A Vue.js(2) project",
   "author": "renmingliang <renmingliang0736@qq.com>",
   "private": true,
   "scripts": {

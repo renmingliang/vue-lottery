@@ -13,6 +13,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 
-/lottery/
-/vue-lottery/
-package-lock.json
+/lottery
+/vue-lottery
