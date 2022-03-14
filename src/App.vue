@@ -1,21 +1,18 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <el-config-provider :locale="locale">
+    <router-view />
+  </el-config-provider>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
-</script>
+import { defineComponent } from 'vue'
+import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 
-<style>
-#app {
-  font-family: "Microsoft YaHei";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #333;
-  height: 100%;
-}
-</style>
+export default defineComponent({
+  setup() {
+    return {
+      locale: zhCn
+    }
+  }
+})
+</script>

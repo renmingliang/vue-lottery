@@ -1,11 +1,12 @@
 # 简介
 
-> 基于vue.js(2.x)抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
+> 基于vue.js(3.x)抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
 
-> 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAScript6
+> 技术栈：
+[vue3.x](https://v3.cn.vuejs.org/) + [pinia](https://pinia.vuejs.org/) + [vue-router4.x](https://router.vuejs.org/) + [element-plus](https://element-plus.org/) + [@vueuse/core](https://vueuse.org/) + axios + mockjs + html2canvas + nprogress + scss + typescript
 
-本项目基于`vuejs(2.x)`已暂告结束；
-基于`vue.js(3.x)`正开发中；
+> 基于vue.js(2.x)版本，可切换分支查看[feature-vue2](https://github.com/renmingliang/vue-lottery/tree/feature-vue2)；
+
 欢迎star or fork 关注！
 
 ## 说明
@@ -18,8 +19,8 @@
 
 本项目主要有以下几个点需要`注意`：
 1. 为了保证数据安全，需要设置登录，在登录成功之后的前提下获取后台传递的数据，以及回传数据也需要验证是否已登录；
-2. 这里利用mock来模拟数据，考虑正式抽奖的数据都上千条，cookie和storage存储空间受限都不够用，依次考虑利用浏览器支持的indexDB来存储用户数据库，以及主要奖项和该奖项抽取的人数的；
-3. 每次抽奖完成的结果，须返回给后台存储数据，以保障前后台数据一致性（实现具体抽奖的逻辑功能，不受限，取决于前后台同事自己沟通结果，本示例前端实现抽取，在[src/views/lottery](src/views/lottery.vue)文件内）；
+2. 这里利用mockjs来模拟数据，考虑正式抽奖的数据都上千条，cookie和storage存储空间受限都不够用，依次考虑利用浏览器支持的indexDB来存储用户数据库，以及主要奖项和该奖项抽取的人数的；
+3. 每次抽奖完成的结果，须返回给后台存储数据，以保障前后台数据一致性（实现具体抽奖的逻辑功能，不受限，取决于前后台同事自己沟通结果，本示例前端实现抽取，在[src/views/lottery](src/views/lottery/hooks/useLottery.ts)文件内）；
 4. 记录单次抽奖人数，不论抽多少次，只要满足本轮奖项人数，即宣告本轮抽取结束，代码逻辑不以抽取多少次为依据；
 5. 同时每次抽中的用户数据需要三步处理：
     >A. 回传至后台；
@@ -68,7 +69,7 @@ data: {
 }
 ```
 
-本项目配置文件位于[src/utils/config](src/utils/config.js)，按照注释相应地修改对应项就好。
+本项目配置文件位于[src/utils/config](src/utils/config.ts)，按照注释相应地修改对应项就好。
 
 ```javascript
 
@@ -133,9 +134,9 @@ const config = {
   // 4.全局state状态
   state: {
     // indexDB名称
-    DBname: 'lottery2018',
+    DBname: 'lottery2022',
     // indexDB版本
-    DBver: '2',
+    DBver: '1',
     // indexDB存储表名称
     storeName: {
       user: 'user', // 用户
@@ -184,23 +185,26 @@ const config = {
 4. 注意：可能在截屏功能下，出现没有将头像获取下来情况，经查阅资料发现，是由于头像采用的mockjs模拟的，而项目代码部署在另外一个服务器，因而出现跨越情况导致此情况出现，解决办法:前端在`html2canvas`中添加参数 ==> 允许跨域：allowTaint: true，同时服务器需要允许跨越，即设置 [`CORS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
 
 ## 开发
-
-``` bash
-# 克隆项目
+```
 git clone https://github.com/renmingliang/vue-lottery.git
+```
 
-# 切换至目录
-cd vue-lottery
+### 依赖安装
+```
+yarn install
+```
 
-# 安装依赖
-npm install
+### 开发调试
+```
+yarn serve
+```
 
-# 本地浏览器地址
-npm run dev
+### 编译构建
+```
+yarn build
+```
 
-# 发布正式版本
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
+### eslint & fix
+```
+yarn lint
 ```
