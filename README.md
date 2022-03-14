@@ -32,13 +32,29 @@
 ### 配置文件
 
 数据的构造，参照如下代码结构：
-```code
+```javascript
 // 抽奖数据
 data: {
   // 用户
   userData: [
-    {Company: '公司测1', CompleteID: '1', HeadImg: 'http://test.baoxianadmin.com/static/m/images/headImage/1.jpg', Name: '测1', Num: 'M1', OpenID: '1', Award: '0'},
-    {Company: '公司测13', CompleteID: '13', HeadImg: 'http://test.baoxianadmin.com/static/m/images/headImage/13.jpg', Name: '测13', Num: 'M13', OpenID: '13', Award: '0'}
+    {
+      Company: '公司测1',
+      CompleteID: '1',
+      HeadImg: 'http://test.baoxianadmin.com/static/m/images/headImage/1.jpg',
+      Name: '测1',
+      Num: 'M1',
+      OpenID: '1',
+      Award: '0'
+    },
+    {
+      Company: '公司测13',
+      CompleteID: '13',
+      HeadImg: 'http://test.baoxianadmin.com/static/m/images/headImage/13.jpg',
+      Name: '测13',
+      Num: 'M13',
+      OpenID: '13',
+      Award: '0'
+    }
   ],
   // 奖项
   type: [
@@ -54,7 +70,7 @@ data: {
 
 本项目配置文件位于[src/utils/config](src/utils/config.js)，按照注释相应地修改对应项就好。
 
-```code
+```javascript
 
 // global config 注意: 所有接口均为mock测试，项目中需要自己替换
 const config = {
@@ -77,7 +93,9 @@ const config = {
   // 2.加载数据页
   onload: {
     // 获取数据地址
-    url: '/zt_lottery/list_member'
+    url: '/zt_lottery/list_member',
+    // 参与限制人数
+    limit: 100
   },
   // 3.中奖活动页
   lottery: {

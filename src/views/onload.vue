@@ -33,8 +33,7 @@ export default {
       getNum: 0, // 用户数据长度
       storeNum: 0, // 存储数据长度
       catchImg: 0, // 已缓存图片数量
-      isActive: 0, // 步骤流程
-      timer: null // 数据校验执行定时器对象,类似ajax的timeout定时器
+      isActive: 0 // 步骤流程
     }
   },
   created () {
@@ -44,8 +43,7 @@ export default {
     ...mapState([
       'DBname',
       'DBver',
-      'storeName',
-      'timeout'
+      'storeName'
     ]),
     ...mapGetters([
       'data'
@@ -60,41 +58,31 @@ export default {
   },
   methods: {
     // 1.初始化
-    ready () {
-      // 1.0.先删除本地indexDB数据表
-      this.deleteDB(this.DBname)
+    async ready () {
+      try {
+        // 1.0.获取数据
+        await this.$store.dispatch({type: 'getDatas'})
+        this.getNum = this.data.userData.length
+        this.isActive = 1
 
-      // 1.1.注意这里采用promise链式语法
-      this.$store.dispatch({type: 'getDatas'})
-        // 1.1.1获取数据
-        .then(() => {
-          this.getNum = this.data.userData.length
-          if (this.data.hasOwnProperty('userData')) {
-            this.isActive = 1
-          }
-        })
+        // 1.1.1.先删除本地indexDB数据表
+        this.deleteDB(this.DBname)
         // 1.1.2.初始化创建本地indexDB数据表
-        .then(() => {
-          this.initDatabase()
-        })
+        await this.initDatabase()
+        this.isActive = 2
+
         // 1.1.3.缓存头像
-        .then(() => {
-          // 由于indexDB存取数据异步，定时器延迟
-          setTimeout(() => {
-            this.preLoadImg()
-          }, 800)
-          console.log(this.timeout)
-        })
-        // 1.1.4.校验数据--等待timeout后抛出错误
-        .then(() => {
-          this.timer = setTimeout(() => {
-            this.validateData()
-          }, this.timeout)
-        })
+        await this.preLoadImg()
+        this.isActive = 3
+
+        // 1.1.4.校验数据
+        await this.validateData()
+        // 1.1.5 前往抽奖页
+        this.$router.push({ path: '/lottery' })
+      } catch (error) {
         // 1.1.5.捕获错误
-        .catch((err) => {
-          console.log(err)
-        })
+        console.log(error)
+      }
     },
     // 2.删除本地表
     deleteDB (name) {
@@ -102,36 +90,42 @@ export default {
     },
     // 3.初始化表
     initDatabase () {
-      if (window.indexedDB) {
-        const self = this
-        self.request = window.indexedDB.open(self.DBname, self.DBver) // 参数为：数据库名和版本号；数据库存在，则打开它；否则创建。
-        self.request.onsuccess = function (event) {
-          const mydb = event.target.result
-          // 插入用户数据表
-          self.insert(mydb, self.storeName.user, self.data.userData).then((res) => {
-            self.storeNum = res
-            if (self.storeNum !== 0) {
-              self.isActive = 2
+      return new Promise((resolve, reject) => {
+        if (window.indexedDB) {
+          const self = this
+          self.request = window.indexedDB.open(self.DBname, self.DBver) // 参数为：数据库名和版本号；数据库存在，则打开它；否则创建。
+          self.request.onsuccess = function (event) {
+            const mydb = event.target.result
+            // 插入用户数据表
+            self.insert(mydb, self.storeName.user, self.data.userData)
+              .then((res) => {
+                self.storeNum = res
+                if (self.storeNum !== 0) resolve(res)
+              })
+              .catch(err => {
+                reject(err)
+              })
+            // 插入奖项数据表
+            self.insert(mydb, self.storeName.award, self.data.type)
+          }
+          self.request.onerror = function (event) {
+            alert(`打开失败,错误号：${event.target.errorCode}`)
+          }
+          self.request.onupgradeneeded = function (event) {
+            const mydb = event.target.result // 获得数据库实例对象
+            if (!mydb.objectStoreNames.contains(self.storeName.user)) { // 判断对象存储空间名称是否已经存在
+              mydb.createObjectStore(self.storeName.user, {keyPath: 'CompleteID'}) // 创建storeName对象存储空间;指定keyPath选项为id（即主键为id）
             }
-          })
-          // 插入奖项数据表
-          self.insert(mydb, self.storeName.award, self.data.type)
-        }
-        self.request.onerror = function (event) {
-          alert(`打开失败,错误号：${event.target.errorCode}`)
-        }
-        self.request.onupgradeneeded = function (event) {
-          const mydb = event.target.result // 获得数据库实例对象
-          if (!mydb.objectStoreNames.contains(self.storeName.user)) { // 判断对象存储空间名称是否已经存在
-            mydb.createObjectStore(self.storeName.user, {keyPath: 'CompleteID'}) // 创建storeName对象存储空间;指定keyPath选项为id（即主键为id）
+            if (!mydb.objectStoreNames.contains(self.storeName.award)) { // 判断对象存储空间名称是否已经存在
+              mydb.createObjectStore(self.storeName.award, {autoIncrement: true})
+            }
           }
-          if (!mydb.objectStoreNames.contains(self.storeName.award)) { // 判断对象存储空间名称是否已经存在
-            mydb.createObjectStore(self.storeName.award, {autoIncrement: true})
-          }
+        } else {
+          const msg = '您的浏览器不支持IndexedDB数据库。'
+          alert(msg)
+          reject(new Error(msg))
         }
-      } else {
-        alert('您的浏览器不支持IndexedDB数据库。')
-      }
+      })
     },
     // 4.插入数据表，修改为Promise链式语法
     insert (db, storeName, tempData) {
@@ -159,64 +153,63 @@ export default {
           request.onsuccess = function (e) {
             storeNum++
           }
+          request.onerror = function (e) {
+            reject(e)
+          }
         }
       })
     },
     // 5.缓存图片
     preLoadImg () {
-      for (const item of this.data.userData) {
-        const tempImg = new Image()
-        // 图片src地址
-        tempImg.src = item.HeadImg
-        // 图片加载完成
-        tempImg.addEventListener('load', () => {
-          this.catchImg++
-        }, false)
-      }
+      return new Promise((resolve, reject) => {
+        const userData = this.data.userData || []
+        for (const item of userData) {
+          const tempImg = new Image()
+          // 图片src地址
+          tempImg.src = item.HeadImg
+          // 图片加载完成
+          tempImg.addEventListener('load', () => {
+            this.catchImg++
+            if (this.catchImg === userData.length) resolve()
+          }, false)
+          // 图片加载失败
+          tempImg.addEventListener('error', error => {
+            reject(error)
+          }, false)
+        }
+      })
     },
     // 6.数据校验
     validateData () {
-      this.isActive = 3
-      if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
-        // 6.1.1清除抛出错误定时器对象
-        clearTimeout(this.timer)
-        const corStep = {
-          title: '成功',
-          status: 'success',
-          description: '3秒后进入抽奖页面'
-        }
-        this.step = corStep
-        this.stop.show = true
-        // 6.1.2.进入下一步，显示大屏倒计时
-        this.isActive = 4
-        let endTime = 3
-        const stopTimer = setInterval(() => {
-          endTime--
-          if (endTime === 2) {
-            this.stop.tips = '贰'
-          } else if (endTime === 1) {
-            this.stop.tips = '壹'
-          } else {
-            clearInterval(stopTimer)
-            this.$router.push({ path: '/lottery' })
+      return new Promise((resolve, reject) => {
+        if (this.catchImg === this.getNum && this.catchImg === this.storeNum) {
+          this.step = {
+            title: '成功',
+            status: 'success',
+            description: '3秒后进入抽奖页面'
           }
-        }, 1000)
-      } else {
-        const errStep = {
-          title: '失败',
-          status: 'error',
-          description: '请重新进入或者 刷新本页面'
+          this.stop.show = true
+          let endTime = 3
+          const stopTimer = setInterval(() => {
+            endTime--
+            if (endTime === 2) {
+              this.stop.tips = '贰'
+            } else if (endTime === 1) {
+              this.stop.tips = '壹'
+            } else {
+              clearInterval(stopTimer)
+              resolve()
+            }
+          }, 1000)
+        } else {
+          this.step = {
+            title: '失败',
+            status: 'error',
+            description: '请重新进入或者 刷新本页面'
+          }
+          reject(new Error('数据校验失败'))
         }
-        this.step = errStep
-      }
-    }
-  },
-  watch: {
-    // 检测图片加载是否完成
-    catchImg (val) {
-      if (val === this.getNum) {
-        this.validateData()
-      }
+      })
     }
   }
 }

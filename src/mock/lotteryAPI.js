@@ -1,4 +1,7 @@
 import Mock from 'mockjs'
+import { getToken, setToken, removeToken } from '@/utils/auth'
+import config from '../utils/config'
+
 const temp = {
   mta2018: {errorInfo: '登陆成功', result: '1', data: ''},
   err: {errorInfo: '密码错误', result: '0', data: ''},
@@ -14,17 +17,21 @@ function getQueryString (str, name) {
 }
 
 // 模拟用户数据
-const userData = []
-for (let i = 1; i < 100; i++) {
-  userData.push(Mock.mock({
-    Company: '@city(true)', // 公司名
-    CompleteID: '@increment', // ID
-    HeadImg: `@image(200x200, @color, #FFF, mock-${i})`, // 微信头像
-    Name: '@cname', // 姓名
-    Num: `M${i}`, // 工号
-    OpenID: '@increment', // 微信ID
-    Award: '0' // 奖项，'0'表示未中奖
-  }))
+const getUserData = function (limit) {
+  limit = limit || 100
+  const userData = []
+  for (let i = 1; i < limit; i++) {
+    userData.push(Mock.mock({
+      Company: '@city(true)', // 公司名
+      CompleteID: '@increment', // ID
+      HeadImg: `@image(200x200, @color, #FFF, mock-${i})`, // 微信头像
+      Name: '@cname', // 姓名
+      Num: `M${i}`, // 工号
+      OpenID: '@increment', // 微信ID
+      Award: '0' // 奖项，'0'表示未中奖
+    }))
+  }
+  return userData
 }
 
 // 奖项类别
@@ -37,38 +44,28 @@ const type = [
   {value: '5', label: '其他', number: ''}
 ]
 
-// 校验登录状态,维持15分钟登录
-const storage = 'isLogin'
-setTimeout(() => {
-  localStorage.removeItem(storage)
-}, 6000 * 150)
-
 export default {
   postLogin: config => {
     const params = getQueryString(config.body, 'username')
     if (temp[params]) {
-      localStorage.setItem(storage, 1)
+      setToken(1)
       return temp[params]
     } else {
-      localStorage.removeItem(storage)
+      removeToken()
       return temp['err']
     }
   },
   checkLogin: config => {
-    const status = localStorage.getItem(storage)
+    const status = getToken()
     if (status) {
       return temp['check']
     } else {
       return temp['noPer']
     }
   },
-  getDatas: () => {
-    return {
-      userData,
-      type
-    }
-  },
-  postDatas: config => {
-    return temp['add']
-  }
+  getDatas: () => ({
+    userData: getUserData(config.onload.limit),
+    type
+  }),
+  postDatas: config => temp['add']
 }

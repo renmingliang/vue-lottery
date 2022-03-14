@@ -12,6 +12,7 @@ export default new Router({
     {
       path: '/',
       name: 'login',
+      meta: { perimeter: true },
       component: _import('login')
     },
     {

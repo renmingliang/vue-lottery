@@ -21,7 +21,9 @@ const config = {
   // 2.加载数据页
   onload: {
     // 获取数据地址
-    url: '/zt_lottery/list_member'
+    url: '/zt_lottery/list_member',
+    // 参与限制人数
+    limit: 100
   },
   // 3.中奖活动页
   lottery: {
@@ -67,8 +69,6 @@ const config = {
       user: 'user', // 用户
       award: 'type' // 奖项
     },
-    // 校验数据--等待timeout执行
-    timeout: 25000,
     // 背景音乐
     music: {
       show: true,
