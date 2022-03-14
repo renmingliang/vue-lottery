@@ -2,10 +2,11 @@
 
 > 基于vue.js(2.x)抽奖项目，截屏保存每次抽奖图片至本地，附带背景音乐
 
-> 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAScript6
+> 技术栈：vue + vuex + vue-router + axios + mock + elementUI + html2canvas + nprogress + less + ECMAScript
 
 本项目基于`vuejs(2.x)`已暂告结束；
-基于`vue.js(3.x)`正开发中；
+基于`vue.js(3.x)`请切分支[master](https://github.com/renmingliang/vue-lottery)
+
 欢迎star or fork 关注！
 
 ## 说明
@@ -187,7 +188,7 @@ const config = {
 
 ``` bash
 # 克隆项目
-git clone https://github.com/renmingliang/vue-lottery.git
+git clone -b feature-vue2 https://github.com/renmingliang/vue-lottery.git
 
 # 切换至目录
 cd vue-lottery
