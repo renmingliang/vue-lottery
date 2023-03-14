@@ -76,8 +76,7 @@ const config = {
     // 参与规则
     rule: {
       show: true,
-      img: require('../assets/images/QR-code.jpg'),
-      html: '<p>活动规则：<br>关注微信公众号“家家365”<br>回复您的员工编号+姓名<br>（如“M0001234王小明”）完成实名认证<br>收到系统回复后即代表进入抽奖名单中</p>'
+      img: require('../assets/images/QR-code.jpg')
     }
   }
 }

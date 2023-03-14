@@ -64,13 +64,9 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="lottery-prize">
-        <img src="../../assets/images/kindle.png" />
-        <p>Kindle 6英寸 电纸书(wifi)</p>
       </div>
       <div v-if="rule.show" class="lottery-rule">
         <img :src="rule.img" />
-        <div v-html="rule.html" class="lottery-txt"></div>
       </div>
       <div v-if="music.show" :class="classMusic" @click="toggleMusic">
         <div class="music-btn"></div>
@@ -269,44 +265,22 @@ $baseColor: rgba(227, 183, 27, 0.9);
     }
     .lottery-options {
       position: absolute;
-      width: 8%;
+      width: 15%;
       left: 1%;
       bottom: 7%;
       color: $baseColor;
       font-size: 1.8vh;
       z-index: 1;
     }
-    .lottery-prize {
-      position: absolute;
-      left: 12%;
-      bottom: 7%;
-      z-index: 1;
-      img {
-        width: 18%;
-        display: inline-block;
-      }
-      p {
-        display: inline-block;
-        vertical-align: bottom;
-        font-size: 1.6vh;
-        color: $baseColor;
-      }
-    }
     .lottery-rule {
       position: absolute;
-      right: -6vw;
-      bottom: 7vh;
-      color: $baseColor;
+      right: -6%;
+      bottom: 11%;
       z-index: 1;
       img {
-        width: 18%;
+        width: 30%;
         float: left;
         margin-right: 2%;
-      }
-      .lottery-txt {
-        overflow: hidden;
-        font-size: 1.6vh;
-        line-height: 1.4;
       }
     }
     .lottery-music {
