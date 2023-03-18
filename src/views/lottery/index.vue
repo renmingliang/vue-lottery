@@ -64,7 +64,6 @@
           </el-form-item>
         </el-form>
       </div>
-      </div>
       <div v-if="rule.show" class="lottery-rule">
         <img :src="rule.img" />
       </div>

@@ -10,6 +10,9 @@
 欢迎star or fork 关注！
 
 ## 说明
+`注意`：本项目内使用 [node-sass](https://www.npmjs.com/package/node-sass)，由于该强依赖 [nodejs](https://nodejs.org/en/download/releases) 版本，具体可看 node-sass 指南；
+本项目内，安装 `node-sass@4.14` 版本，与之匹配 `node@14` 版本，请特别注意。
+如已安装 node 版本与 node-sass 不匹配，请重新安装node版本，或将 node-sass 替换成 dart-sass。
 
 ### 示例地址
 
